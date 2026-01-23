@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>五下數學：體積大師</title>
+    <!-- 引入 Tailwind CSS (美化樣式) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 React 和 Babel (核心邏輯) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        
+        /* 自定義動畫 */
+        @keyframes bounce-short {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-bounce-short { animation: bounce-short 0.5s ease-in-out; }
+        
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fade-in 0.5s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-blue-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- SVG 圖示組件 ---
+        const IconBookOpen = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        );
+        const IconAward = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+        );
+        const IconBarChart = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        );
+        const IconCheck = ({ size = 24, className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="20 6 9 17 4 12"/></svg>
+        );
+        const IconX = ({ size = 24, className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        );
+        const IconSettings = ({ size = 16, className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        );
+        const IconSend = ({ size = 18, className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        );
+        const IconUser = ({ size = 24, className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        );
+        const IconScissors = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
+        );
+        const IconLayers = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        );
+
+        // --- 資料設定 ---
+
+        const CONCEPTS = [
+          {
+            id: 1,
+            title: "重點 1：什麼是體積？",
+            desc: "體積就是物體「佔了多少空間」。",
+            unit: ["小物品 → 立方公分 (cm³)", "大空間 → 立方公尺 (m³)"],
+            memory: "⚡ 超強記憶：體積就是「佔位子」！胖子佔的體積大，瘦子佔的體積小。",
+            type: "stack"
+          },
+          {
+            id: 2,
+            title: "重點 2：長方體的體積",
+            desc: "長方體體積 ＝ 長 × 寬 × 高",
+            memory: "⚡ 超強記憶：長、寬、高，三個好朋友乘在一起！",
+            type: "prism"
+          },
+          {
+            id: 3,
+            title: "重點 3：正方體的體積",
+            desc: "正方體體積 ＝ 邊長 × 邊長 × 邊長",
+            memory: "⚡ 超強記憶：正方體是「完美寶寶」，長寬高都一樣，邊長連乘三次！",
+            type: "cube"
+          },
+          {
+            id: 4,
+            title: "重點 4：1 立方公尺的量感",
+            desc: "1 m³ = 1,000,000 cm³。它是邊長 1 公尺的正方體。",
+            memory: "⚡ 超強記憶：1 後面跟著 6 個 0 (百萬)！想像把一個小朋友關進大箱子，那個箱子大約就是 1 立方公尺。",
+            type: "sense"
+          },
+          {
+            id: 5,
+            title: "重點 5：體積單位的選擇",
+            desc: "不用亂換單位，只要「選對」。小用 cm³，大用 m³。",
+            memory: "⚡ 超強記憶：手指頭拿得動的用 cm³，整個人鑽得進去的用 m³！",
+            type: "unit-game"
+          },
+          {
+            id: 6,
+            title: "重點 6：簡單複合形體",
+            desc: "策略：切開相加，或補滿相減。",
+            memory: "⚡ 超強記憶：遇到怪形狀，「切切切」或「補補補」！\n例如：樓梯形狀用「切」的，缺角的盒子用「補」成完整的再減掉。",
+            type: "composite"
+          }
+        ];
+
+        const QUESTIONS = [
+          // 是非題
+          { id: 1, type: "tf", q: "體積是用來表示物體佔空間的大小。", ans: true, hint: "沒錯，這就是體積的定義！" },
+          { id: 2, type: "tf", q: "長方體只要知道長和寬就能算體積。", ans: false, hint: "還少了一個「高」喔！" },
+          { id: 3, type: "tf", q: "正方體的三個邊長都一樣。", ans: true, hint: "是的，長=寬=高。" },
+          { id: 4, type: "tf", q: "1 立方公尺比 1 立方公分小。", ans: false, hint: "1 立方公尺可是有一百萬個 1 立方公分那麼多！" },
+          { id: 5, type: "tf", q: "鉛筆盒適合用立方公尺表示體積。", ans: false, hint: "鉛筆盒小小的，用立方公分 (cm³) 比較適合。" },
+          { id: 6, type: "tf", q: "1 立方公尺等於 1000000 立方公分。", ans: true, hint: "正確！100 × 100 × 100 = 1,000,000。" },
+          { id: 7, type: "tf", q: "箱子擺放方向不同，體積可能會變。", ans: false, hint: "體積是不會變的，只是長寬高看起來位置換了。" },
+          { id: 8, type: "tf", q: "複合形體可以切開來算體積。", ans: true, hint: "這是一個很好的解題策略！" },
+          // 選擇題
+          { id: 9, type: "mc", q: "下列哪一個最適合用「立方公尺」？", options: ["A. 橡皮擦", "B. 鉛筆盒", "C. 教室", "D. 杯子"], ans: "C", hint: "教室很大，人可以走進去，用 m³。" },
+          { id: 10, type: "mc", q: "長 5 cm、寬 4 cm、高 3 cm 的盒子，體積是多少？", options: ["A. 12", "B. 20", "C. 60", "D. 120"], ans: "C", hint: "5 × 4 × 3 = 60" },
+          { id: 11, type: "mc", q: "邊長 4 cm 的正方體，體積是多少？", options: ["A. 12", "B. 16", "C. 64", "D. 48"], optionsVal: ["A", "B", "C", "D"], ans: "C", hint: "4 × 4 × 4 = 64" },
+          { id: 12, type: "mc", q: "下列哪一個體積最大？", options: ["A. 10×10×1 (=100)", "B. 5×5×5 (=125)", "C. 20×2×1 (=40)", "D. 8×3×2 (=48)"], ans: "B", hint: "算算看：B 是 125，最大。" },
+          // 補充題目
+          { id: 13, type: "mc", q: "1 m³ = ? cm³", options: ["A. 100", "B. 10000", "C. 1000000", "D. 10"], ans: "C", hint: "記得 6 個 0 喔！" },
+          { id: 14, type: "tf", q: "計算體積時，單位如果不一樣，可以直接相乘。", ans: false, hint: "不行！要先換成相同單位才能計算。" },
+          { id: 15, type: "mc", q: "一個正方體邊長變為原來的 2 倍，體積會變幾倍？", options: ["A. 2倍", "B. 4倍", "C. 6倍", "D. 8倍"], ans: "D", hint: "2 × 2 × 2 = 8 倍！" },
+          { id: 16, type: "mc", q: "大卡車的貨櫃體積大約是？", options: ["A. 30 cm³", "B. 30 m³", "C. 3000 cm³", "D. 3 m³"], ans: "B", hint: "貨櫃很大，用 m³，且通常比 3 m³ 大很多。" },
+          { id: 17, type: "tf", q: "把一塊長方體黏土捏成球形，體積會改變。", ans: false, hint: "形狀改變，但佔的空間量（體積）不變。" },
+          { id: 18, type: "mc", q: "長 100cm, 寬 100cm, 高 100cm 的正方體，體積是？", options: ["A. 1 cm³", "B. 1 m³", "C. 100 m³", "D. 10 m³"], ans: "B", hint: "100cm = 1m，所以是 1 m³。" },
+          { id: 19, type: "mc", q: "求複合圖形體積時，哪種方法是錯誤的？", options: ["A. 切割成兩個長方體", "B. 補成大長方體再扣除", "C. 直接把所有邊長加起來", "D. 分塊計算再相加"], ans: "C", hint: "體積是乘法概念，不是邊長相加喔。" },
+          { id: 20, type: "tf", q: "體積越大的物體，重量一定越重。", ans: false, hint: "不一定喔！一大團棉花可能比一小塊鐵還輕。（這是密度的觀念，但在體積單元要知道體積≠重量）" }
+        ];
+
+        // --- 互動組件 ---
+
+        // 概念 1 互動：堆疊方塊
+        const InteractiveStack = () => {
+          const [count, setCount] = useState(1);
+          return (
+            <div className="flex flex-col items-center bg-blue-50 p-6 rounded-xl">
+              <div className="mb-4 text-xl font-bold text-blue-800">目前堆疊：{count} 個小方塊</div>
+              <div className="flex flex-wrap justify-center w-64 h-32 content-end gap-1 mb-4">
+                {Array.from({ length: count }).map((_, i) => (
+                  <div key={i} className="relative w-10 h-10 bg-orange-400 border-2 border-orange-600 rounded shadow-md animate-bounce-short">
+                    {/* 只在第一個方塊標示尺寸，避免畫面太亂 */}
+                    {i === 0 && count === 1 && (
+                        <div className="absolute -top-6 left-0 w-full text-center text-xs text-gray-500 font-bold whitespace-nowrap">
+                           長寬高1cm
+                        </div>
+                    )}
+                     <div className="absolute inset-0 flex items-center justify-center text-[8px] text-orange-800 opacity-50 font-mono">1cm³</div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-4">
+                <button onClick={() => setCount(c => Math.max(1, c - 1))} className="px-4 py-2 bg-gray-300 rounded-full font-bold">-</button>
+                <button onClick={() => setCount(c => Math.min(12, c + 1))} className="px-4 py-2 bg-blue-500 text-white rounded-full font-bold shadow-md hover:bg-blue-600">
+                  + 堆疊方塊
+                </button>
+              </div>
+              <p className="mt-2 text-sm text-gray-600">每個小方塊都是 1cm × 1cm × 1cm</p>
+              <p className="text-sm font-bold text-blue-600">總體積 = {count} cm³</p>
+            </div>
+          );
+        };
+
+        // 概念 2 互動：長方體拉伸 (SVG 版本)
+        const InteractivePrism = () => {
+          const [l, setL] = useState(3);
+          const [w, setW] = useState(2);
+          const [h, setH] = useState(2);
+          
+          // 計算 SVG 繪圖參數
+          const scale = 30; // 放大倍率
+          const depthX = 15; // 深度 X 偏移 (每單位寬)
+          const depthY = -15; // 深度 Y 偏移 (每單位寬)
+          
+          // 座標點
+          // 原點 (Front-Bottom-Left)
+          const startX = 50; 
+          const startY = 200; 
+
+          // 正面 (Front Face)
+          const fW = l * scale;
+          const fH = h * scale;
+          
+          // 深度偏移 (Depth Offset based on Width)
+          const dX = w * depthX;
+          const dY = w * depthY;
+
+          // 計算各個頂點座標
+          // p1: 左下, p2: 右下, p3: 右上, p4: 左上 (正面)
+          const p1 = { x: startX, y: startY };
+          const p2 = { x: startX + fW, y: startY };
+          const p3 = { x: startX + fW, y: startY - fH };
+          const p4 = { x: startX, y: startY - fH };
+
+          // p5: 左下後, p6: 右下後, p7: 右上後, p8: 左上後 (背面)
+          const p5 = { x: startX + dX, y: startY + dY };
+          const p6 = { x: startX + fW + dX, y: startY + dY };
+          const p7 = { x: startX + fW + dX, y: startY - fH + dY };
+          const p8 = { x: startX + dX, y: startY - fH + dY };
+
+          return (
+            <div className="flex flex-col items-center bg-green-50 p-6 rounded-xl w-full">
+              <div className="relative mb-4 flex justify-center items-center w-full" style={{ height: '250px' }}>
+                <svg width="350" height="250" className="overflow-visible">
+                    {/* 定義濾鏡或樣式 */}
+                    <defs>
+                        <linearGradient id="frontGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#86efac" />
+                            <stop offset="100%" stopColor="#4ade80" />
+                        </linearGradient>
+                         <linearGradient id="topGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#dcfce7" />
+                            <stop offset="100%" stopColor="#bbf7d0" />
+                        </linearGradient>
+                         <linearGradient id="sideGrad" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#4ade80" />
+                            <stop offset="100%" stopColor="#22c55e" />
+                        </linearGradient>
+                    </defs>
+
+                    {/* 後面 (虛線輔助) */}
+                    <path d={`M${p5.x},${p5.y} L${p6.x},${p6.y} L${p7.x},${p7.y} L${p8.x},${p8.y} Z`} 
+                          fill="none" stroke="#cbd5e1" strokeDasharray="4" />
+                    <line x1={p1.x} y1={p1.y} x2={p5.x} y2={p5.y} stroke="#cbd5e1" strokeDasharray="4" />
+                    
+                    {/* 實體面繪製 (由後往前畫) */}
+                    
+                    {/* 右側面 (Right Face: p2-p6-p7-p3) */}
+                    <path d={`M${p2.x},${p2.y} L${p6.x},${p6.y} L${p7.x},${p7.y} L${p3.x},${p3.y} Z`} 
+                          fill="url(#sideGrad)" stroke="#166534" strokeWidth="2" />
+
+                    {/* 頂面 (Top Face: p4-p3-p7-p8) */}
+                    <path d={`M${p4.x},${p4.y} L${p3.x},${p3.y} L${p7.x},${p7.y} L${p8.x},${p8.y} Z`} 
+                          fill="url(#topGrad)" stroke="#166534" strokeWidth="2" />
+
+                    {/* 正面 (Front Face: p1-p2-p3-p4) */}
+                    <path d={`M${p1.x},${p1.y} L${p2.x},${p2.y} L${p3.x},${p3.y} L${p4.x},${p4.y} Z`} 
+                          fill="url(#frontGrad)" stroke="#166534" strokeWidth="2" />
+                    
+                    {/* 尺寸標示線與文字 */}
+                    
+                    {/* 長 (下方) */}
+                    <line x1={p1.x} y1={p1.y + 15} x2={p2.x} y2={p2.y + 15} stroke="#374151" markerEnd="url(#arrow)" markerStart="url(#arrow)"/>
+                    <text x={(p1.x+p2.x)/2} y={p1.y + 30} textAnchor="middle" fill="#374151" fontWeight="bold">長 {l}cm</text>
+
+                    {/* 高 (左方) */}
+                    <line x1={p1.x - 15} y1={p1.y} x2={p4.x - 15} y2={p4.y} stroke="#374151" />
+                    <text x={p1.x - 35} y={(p1.y+p4.y)/2} textAnchor="middle" fill="#374151" fontWeight="bold" transform={`rotate(-90, ${p1.x - 35}, ${(p1.y+p4.y)/2})`}>高 {h}cm</text>
+
+                    {/* 寬 (右上方斜線) - 標示在頂面旁邊 */}
+                    <line x1={p3.x + 5} y1={p3.y - 5} x2={p7.x + 5} y2={p7.y - 5} stroke="#374151" />
+                    <text x={(p3.x+p7.x)/2 + 10} y={(p3.y+p7.y)/2 - 10} textAnchor="start" fill="#374151" fontWeight="bold">寬 {w}cm</text>
+
+                    {/* 體積文字 - 置中顯示 */}
+                    <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" fill="#064e3b" fontSize="24" fontWeight="bold" opacity="0.9" style={{textShadow: "1px 1px 0px rgba(255,255,255,0.8)"}}>
+                        {l * w * h} cm³
+                    </text>
+
+                </svg>
+              </div>
+              
+              <div className="grid grid-cols-3 gap-4 mt-4 w-full max-w-sm">
+                {[['長', l, setL], ['寬', w, setW], ['高', h, setH]].map(([label, val, setVal]) => (
+                  <div key={label} className="text-center">
+                    <label className="block text-sm font-bold text-gray-700">{label}: {val} cm</label>
+                    <input type="range" min="1" max="5" value={val} onChange={(e) => setVal(Number(e.target.value))} 
+                           className="w-full accent-green-600 cursor-pointer" />
+                  </div>
+                ))}
+              </div>
+              <p className="mt-4 text-xl font-bold text-green-800">體積 = {l} × {w} × {h} = {l * w * h} cm³</p>
+            </div>
+          );
+        };
+
+        // 概念 5 互動：單位選擇遊戲
+        const InteractiveUnitGame = () => {
+          const items = [
+            { name: "✏️ 鉛筆盒", correct: "cm³" },
+            { name: "🏫 教室", correct: "m³" },
+            { name: "🍚 電鍋", correct: "cm³" },
+            { name: "🐘 大象", correct: "m³" }
+          ];
+          const [idx, setIdx] = useState(0);
+          const [feedback, setFeedback] = useState("");
+
+          const handleGuess = (unit) => {
+            if (unit === items[idx].correct) {
+              setFeedback("✅ 答對了！");
+              setTimeout(() => {
+                setFeedback("");
+                setIdx((prev) => (prev + 1) % items.length);
+              }, 1000);
+            } else {
+              setFeedback("❌ 再想一下...");
+            }
+          };
+
+          return (
+            <div className="bg-purple-50 p-6 rounded-xl text-center w-full">
+              <div className="text-6xl mb-4 animate-pulse">{items[idx].name.split(" ")[0]}</div>
+              <div className="text-2xl font-bold text-purple-900 mb-6">{items[idx].name.split(" ")[1]}</div>
+              <div className="flex justify-center gap-4">
+                <button onClick={() => handleGuess("cm³")} className="px-6 py-3 bg-white border-2 border-purple-500 rounded-lg hover:bg-purple-100 font-bold text-lg transition">cm³ (小)</button>
+                <button onClick={() => handleGuess("m³")} className="px-6 py-3 bg-white border-2 border-purple-500 rounded-lg hover:bg-purple-100 font-bold text-lg transition">m³ (大)</button>
+              </div>
+              <div className="mt-4 h-8 text-lg font-bold text-purple-600">{feedback}</div>
+            </div>
+          );
+        };
+
+        // --- 主應用程式 ---
+        function VolumeMasterClass() {
+          const [screen, setScreen] = useState('welcome'); // welcome, learn, quiz, report
+          const [user, setUser] = useState({ name: '', history: [] });
+          const [tempName, setTempName] = useState('');
+          const [currentConcept, setCurrentConcept] = useState(0);
+          
+          // 測驗狀態
+          const [currentQ, setCurrentQ] = useState(0);
+          const [score, setScore] = useState(0);
+          const [answers, setAnswers] = useState([]); // { qId, userAns, correct }
+          const [showFeedback, setShowFeedback] = useState(false);
+          const [currentAns, setCurrentAns] = useState(null);
+
+          // 老師設定 (模擬)
+          const [teacherUrl, setTeacherUrl] = useState("");
+          const [showSettings, setShowSettings] = useState(false);
+
+          useEffect(() => {
+            const saved = localStorage.getItem('volumeMasterUser');
+            if (saved) {
+              setUser(JSON.parse(saved));
+            }
+            const savedTeacherUrl = localStorage.getItem('volumeMasterTeacherUrl');
+            if (savedTeacherUrl) {
+                setTeacherUrl(savedTeacherUrl);
+            }
+          }, []);
+
+          const saveUser = (newData) => {
+            const updated = { ...user, ...newData };
+            setUser(updated);
+            localStorage.setItem('volumeMasterUser', JSON.stringify(updated));
+          };
+
+          const saveTeacherUrl = (url) => {
+              setTeacherUrl(url);
+              localStorage.setItem('volumeMasterTeacherUrl', url);
+          }
+
+          const startApp = () => {
+            if (!tempName.trim()) return;
+            saveUser({ name: tempName });
+            setScreen('menu');
+          };
+
+          const submitQuiz = () => {
+            const finalScore = Math.round((score / QUESTIONS.length) * 100);
+            const record = {
+              date: new Date().toLocaleString(),
+              score: finalScore,
+              correctCount: score,
+              totalCount: QUESTIONS.length,
+              details: answers
+            };
+            
+            const newHistory = [record, ...user.history];
+            saveUser({ history: newHistory });
+            setScreen('report');
+          };
+
+          const handleAnswer = (option) => {
+            if (showFeedback) return;
+            
+            const q = QUESTIONS[currentQ];
+            let isCorrect = false;
+            
+            if (q.type === 'tf') isCorrect = (option === q.ans);
+            if (q.type === 'mc') {
+               const choiceLetter = option.charAt(0);
+               isCorrect = (choiceLetter === q.ans);
+            }
+
+            setCurrentAns({ user: option, correct: isCorrect, hint: q.hint });
+            setShowFeedback(true);
+            if (isCorrect) setScore(s => s + 1);
+
+            setAnswers([...answers, {
+              id: q.id,
+              q: q.q,
+              userAns: typeof option === 'boolean' ? (option ? "O" : "X") : option,
+              isCorrect
+            }]);
+          };
+
+          const nextQuestion = () => {
+            setShowFeedback(false);
+            setCurrentAns(null);
+            if (currentQ < QUESTIONS.length - 1) {
+              setCurrentQ(prev => prev + 1);
+            } else {
+              submitQuiz();
+            }
+          };
+
+          // --- 畫面渲染邏輯 ---
+
+          if (screen === 'welcome') {
+            return (
+              <div className="min-h-screen bg-gradient-to-b from-blue-200 to-white flex items-center justify-center p-4">
+                <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
+                  <div className="text-6xl mb-4">📦</div>
+                  <h1 className="text-3xl font-bold text-blue-800 mb-2">五下數學：體積大師</h1>
+                  <p className="text-gray-600 mb-6">準備好變身空間魔術師了嗎？</p>
+                  <input
+                    type="text"
+                    placeholder="請輸入你的姓名"
+                    className="w-full p-3 border-2 border-blue-300 rounded-lg mb-4 text-center text-lg focus:outline-none focus:border-blue-500"
+                    value={tempName}
+                    onChange={e => setTempName(e.target.value)}
+                  />
+                  <button 
+                    onClick={startApp}
+                    className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold text-xl hover:bg-blue-700 transition transform hover:scale-105"
+                  >
+                    開始學習 🚀
+                  </button>
+                  
+                  <div className="mt-8 pt-4 border-t text-sm text-gray-400 cursor-pointer select-none" onClick={() => setShowSettings(!showSettings)}>
+                    <IconSettings className="inline mr-1" /> 老師設定
+                  </div>
+                  {showSettings && (
+                    <div className="mt-2 text-left bg-gray-50 p-3 rounded text-xs border border-gray-200">
+                      <p className="mb-1">Google Form 預填連結 (選填):</p>
+                      <input 
+                        type="text" 
+                        className="w-full border p-2 rounded mb-1" 
+                        placeholder="https://docs.google.com/forms/..."
+                        value={teacherUrl}
+                        onChange={e => saveTeacherUrl(e.target.value)}
+                      />
+                      <p className="text-gray-500">若設定此連結，學生查看成績單時可點擊「傳送給老師」。</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          }
+
+          if (screen === 'menu') {
+            return (
+              <div className="min-h-screen bg-blue-50 p-6">
+                <div className="max-w-4xl mx-auto">
+                  <header className="flex justify-between items-center mb-8">
+                    <h1 className="text-2xl font-bold text-blue-900">你好，{user.name} 👋</h1>
+                    <button onClick={() => setScreen('welcome')} className="text-sm text-gray-500 underline hover:text-blue-700">登出</button>
+                  </header>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div onClick={() => setScreen('learn')} className="bg-white p-6 rounded-2xl shadow-lg cursor-pointer hover:shadow-2xl transition transform hover:-translate-y-1 border-l-8 border-green-400 group">
+                      <div className="flex items-center mb-4">
+                        <IconBookOpen className="w-8 h-8 text-green-500 mr-3" />
+                        <h2 className="text-2xl font-bold text-gray-800">觀念學習</h2>
+                      </div>
+                      <p className="text-gray-600">圖解體積概念、互動操作，搭配超強記憶法！</p>
+                      <div className="mt-4 text-green-500 font-bold group-hover:translate-x-2 transition-transform">開始上課 &rarr;</div>
+                    </div>
+
+                    <div onClick={() => {
+                      setScore(0); setCurrentQ(0); setAnswers([]); setScreen('quiz');
+                    }} className="bg-white p-6 rounded-2xl shadow-lg cursor-pointer hover:shadow-2xl transition transform hover:-translate-y-1 border-l-8 border-orange-400 group">
+                      <div className="flex items-center mb-4">
+                        <IconAward className="w-8 h-8 text-orange-500 mr-3" />
+                        <h2 className="text-2xl font-bold text-gray-800">挑戰測驗</h2>
+                      </div>
+                      <p className="text-gray-600">20 題互動關卡，測試你是不是體積大師。</p>
+                      <div className="mt-4 text-orange-500 font-bold group-hover:translate-x-2 transition-transform">開始挑戰 &rarr;</div>
+                    </div>
+
+                    <div onClick={() => setScreen('report')} className="bg-white p-6 rounded-2xl shadow-lg cursor-pointer hover:shadow-2xl transition transform hover:-translate-y-1 border-l-8 border-purple-400 md:col-span-2 group">
+                      <div className="flex items-center mb-4">
+                        <IconBarChart className="w-8 h-8 text-purple-500 mr-3" />
+                        <h2 className="text-2xl font-bold text-gray-800">學習記錄</h2>
+                      </div>
+                      <p className="text-gray-600">查看你的成績單、答錯記錄，並匯出給老師。</p>
+                      <div className="mt-4 text-purple-500 font-bold group-hover:translate-x-2 transition-transform">查看記錄 &rarr;</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (screen === 'learn') {
+            const concept = CONCEPTS[currentConcept];
+            return (
+              <div className="min-h-screen bg-gray-100 flex flex-col">
+                <div className="bg-white p-4 shadow-md flex justify-between items-center sticky top-0 z-10">
+                  <button onClick={() => setScreen('menu')} className="px-4 py-2 text-gray-600 font-bold hover:bg-gray-100 rounded">
+                     &larr; 回主選單
+                  </button>
+                  <div className="flex gap-2">
+                     {CONCEPTS.map((c, idx) => (
+                       <div key={c.id} 
+                            className={`w-3 h-3 rounded-full ${idx === currentConcept ? 'bg-blue-600' : 'bg-gray-300'}`} />
+                     ))}
+                  </div>
+                  <div className="w-24"></div>
+                </div>
+
+                <div className="flex-1 flex flex-col items-center justify-center p-6">
+                  <div className="max-w-2xl w-full bg-white rounded-3xl shadow-xl overflow-hidden">
+                    <div className="bg-blue-600 p-6 text-white">
+                       <h2 className="text-3xl font-bold mb-2">{concept.title}</h2>
+                       <p className="text-blue-100 text-lg whitespace-pre-wrap">{concept.desc}</p>
+                    </div>
+                    
+                    <div className="p-8">
+                      {/* 動態互動區 */}
+                      <div className="mb-8 min-h-[200px] flex items-center justify-center">
+                        {concept.type === 'stack' && <InteractiveStack />}
+                        {concept.type === 'prism' && <InteractivePrism />}
+                        {concept.type === 'unit-game' && <InteractiveUnitGame />}
+                        {concept.type === 'cube' && (
+                          <div className="flex gap-8 justify-center">
+                            {/* 正面視圖 */}
+                            <div className="text-center">
+                              <p className="font-bold text-gray-600 mb-2">正面看 (第一層)</p>
+                              <div className="w-32 h-32 bg-orange-100 mx-auto grid grid-cols-3 grid-rows-3 gap-0.5 border-4 border-orange-600 relative">
+                                  {Array.from({length: 9}).map((_,i) => <div key={i} className="bg-orange-300 border border-orange-500"></div>)}
+                                  <div className="absolute inset-0 flex items-center justify-center text-4xl font-bold text-orange-900 opacity-20">1</div>
+                              </div>
+                              <p className="text-sm text-gray-500 mt-1">3 × 3 = 9 個</p>
+                            </div>
+                            
+                            {/* 側面示意圖 - 用稍微傾斜或分層的方式表示 */}
+                            <div className="text-center">
+                              <p className="font-bold text-gray-600 mb-2">側面看 (有三層)</p>
+                              <div className="flex items-end justify-center h-32 space-x-1">
+                                <div className="w-8 h-32 bg-orange-300 border-2 border-orange-600 flex items-center justify-center font-bold text-orange-800">1</div>
+                                <div className="w-8 h-32 bg-orange-400 border-2 border-orange-600 flex items-center justify-center font-bold text-orange-800">2</div>
+                                <div className="w-8 h-32 bg-orange-500 border-2 border-orange-600 flex items-center justify-center font-bold text-white">3</div>
+                              </div>
+                              <p className="text-sm text-gray-500 mt-1">後面還有 2 層！</p>
+                            </div>
+                          </div>
+                        )}
+                        {concept.type === 'sense' && (
+                          <div className="text-center relative">
+                            <div className="w-64 h-64 border-4 border-dashed border-gray-400 mx-auto rounded-lg flex items-center justify-center bg-gray-50">
+                                <span className="text-4xl text-gray-300 font-bold">1 m³</span>
+                            </div>
+                            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex items-end">
+                               <IconUser size={40} className="text-blue-500" />
+                               <IconUser size={40} className="text-red-500 -ml-2" />
+                               <IconUser size={40} className="text-green-500 -ml-2" />
+                            </div>
+                            <p className="mt-2 text-gray-500">大約可以容納 4-5 個小朋友蹲在裡面喔！</p>
+                          </div>
+                        )}
+                        {concept.type === 'composite' && (
+                          <div className="text-center w-full">
+                             <div className="flex justify-center gap-8 items-stretch">
+                                <div className="bg-red-50 p-4 rounded-xl border-2 border-red-200 flex-1 max-w-[250px]">
+                                   <IconScissors className="mx-auto mb-2 text-red-500 w-10 h-10" />
+                                   <p className="font-bold text-red-700 text-lg">🔪 切割法</p>
+                                   <p className="text-sm text-gray-600 my-2">把形狀切成好幾塊長方體，分別算出體積再加起來。</p>
+                                   <div className="bg-white p-2 rounded text-xs text-left border border-red-100">
+                                     <strong>舉例：樓梯形狀</strong><br/>
+                                     切成三塊像「階梯」一樣的長方體，算出每一階的體積，最後加總。
+                                   </div>
+                                </div>
+                                <div className="bg-blue-50 p-4 rounded-xl border-2 border-blue-200 flex-1 max-w-[250px]">
+                                   <IconLayers className="mx-auto mb-2 text-blue-500 w-10 h-10" />
+                                   <p className="font-bold text-blue-700 text-lg">🧱 填補法</p>
+                                   <p className="text-sm text-gray-600 my-2">把空缺補起來變成一個大長方體，算出體積後再減掉補的部分。</p>
+                                   <div className="bg-white p-2 rounded text-xs text-left border border-blue-100">
+                                     <strong>舉例：缺角的盒子/ㄈ字型</strong><br/>
+                                     先假裝它是完整的長方體算出大體積，再扣掉中間空心的體積。
+                                   </div>
+                                </div>
+                             </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* 超強記憶區 */}
+                      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
+                        <p className="text-yellow-800 font-bold text-lg whitespace-pre-line">{concept.memory}</p>
+                      </div>
+                      
+                      {concept.type === 'cube' && (
+                        <div className="mt-4 text-center">
+                            <p className="text-xl font-bold text-orange-600 bg-orange-50 inline-block px-4 py-2 rounded-lg border border-orange-200">
+                                體積 = 邊長 × 邊長 × 邊長 = 3 × 3 × 3 = 27
+                            </p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="bg-gray-50 p-4 flex justify-between">
+                      <button 
+                        onClick={() => setCurrentConcept(c => Math.max(0, c - 1))}
+                        disabled={currentConcept === 0}
+                        className="px-6 py-2 rounded-lg bg-white border hover:bg-gray-100 disabled:opacity-50"
+                      >
+                        上一頁
+                      </button>
+                      <button 
+                        onClick={() => {
+                            if (currentConcept < CONCEPTS.length - 1) {
+                                setCurrentConcept(c => c + 1);
+                            } else {
+                                setScreen('menu');
+                            }
+                        }}
+                        className="px-6 py-2 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-md"
+                      >
+                        {currentConcept === CONCEPTS.length - 1 ? "完成學習" : "下一頁"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (screen === 'quiz') {
+            const q = QUESTIONS[currentQ];
+            const progress = ((currentQ) / QUESTIONS.length) * 100;
+
+            return (
+              <div className="min-h-screen bg-indigo-50 flex flex-col">
+                <div className="w-full bg-gray-200 h-2">
+                  <div className="bg-indigo-500 h-2 transition-all duration-500" style={{ width: `${progress}%` }}></div>
+                </div>
+                
+                <div className="flex-1 flex items-center justify-center p-4">
+                  <div className="max-w-2xl w-full bg-white rounded-3xl shadow-xl overflow-hidden p-8 relative">
+                    <div className="absolute top-4 right-4 text-indigo-200 font-bold text-4xl">
+                      {currentQ + 1} <span className="text-xl">/ {QUESTIONS.length}</span>
+                    </div>
+
+                    <h2 className="text-2xl font-bold text-gray-800 mb-8 pr-12 leading-relaxed">
+                      {q.q}
+                    </h2>
+
+                    {!showFeedback ? (
+                      <div className="grid gap-4">
+                        {q.type === 'tf' ? (
+                          <div className="flex gap-4 h-32">
+                            <button onClick={() => handleAnswer(true)} className="flex-1 bg-green-100 hover:bg-green-200 text-green-700 rounded-xl text-5xl font-bold flex items-center justify-center border-2 border-green-200 transition-transform hover:scale-105">O</button>
+                            <button onClick={() => handleAnswer(false)} className="flex-1 bg-red-100 hover:bg-red-200 text-red-700 rounded-xl text-5xl font-bold flex items-center justify-center border-2 border-red-200 transition-transform hover:scale-105">X</button>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-1 gap-3">
+                            {q.options.map((opt, idx) => (
+                              <button 
+                                key={idx} 
+                                onClick={() => handleAnswer(opt)}
+                                className="text-left p-4 rounded-xl border-2 border-indigo-100 hover:bg-indigo-50 hover:border-indigo-300 text-lg font-medium transition-colors"
+                              >
+                                {opt}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-center animate-fade-in">
+                        <div className={`flex justify-center mb-4 ${currentAns.correct ? 'text-green-500' : 'text-red-500'}`}>
+                          {currentAns.correct ? <IconCheck size={80} /> : <IconX size={80} />}
+                        </div>
+                        <h3 className={`text-2xl font-bold mb-2 ${currentAns.correct ? 'text-green-700' : 'text-red-700'}`}>
+                          {currentAns.correct ? "答對了！" : "答錯囉！"}
+                        </h3>
+                        <div className="bg-gray-100 p-4 rounded-lg text-gray-700 mb-6 text-lg">
+                          💡 {currentAns.hint}
+                        </div>
+                        <button onClick={nextQuestion} className="px-8 py-3 bg-indigo-600 text-white rounded-full font-bold text-xl hover:bg-indigo-700 shadow-lg hover:shadow-xl transition-transform hover:-translate-y-1">
+                          {currentQ < QUESTIONS.length - 1 ? "下一題" : "看成績"}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (screen === 'report') {
+            const latest = user.history[0] || {};
+            
+            return (
+              <div className="min-h-screen bg-gray-50 p-6">
+                <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+                  <div className="bg-purple-600 p-6 text-white text-center">
+                    <h2 className="text-3xl font-bold mb-2">學習成績單</h2>
+                    <p className="opacity-90">姓名：{user.name}</p>
+                  </div>
+
+                  <div className="p-8">
+                    <div className="text-center mb-8">
+                      <div className="inline-block p-6 rounded-full bg-purple-50 border-4 border-purple-200 mb-4">
+                        <span className="text-5xl font-bold text-purple-700">{latest.score}</span>
+                        <span className="text-xl text-purple-400"> 分</span>
+                      </div>
+                      <p className="text-gray-600">
+                        答對 {latest.correctCount} / {latest.totalCount} 題 ({latest.date})
+                      </p>
+                      <div className="mt-2 text-lg font-bold text-purple-600">
+                        {latest.score >= 90 ? "太強了！你是體積大師！🏆" : 
+                         latest.score >= 60 ? "很棒喔！繼續加油！💪" : "別氣餒，再複習一次觀念吧！📚"}
+                      </div>
+                    </div>
+
+                    <h3 className="text-lg font-bold text-gray-700 mb-4 border-b pb-2">答題詳情</h3>
+                    <div className="space-y-3 mb-8 max-h-60 overflow-y-auto pr-2">
+                      {latest.details && latest.details.map((ans, i) => (
+                        <div key={i} className={`flex justify-between items-center p-3 rounded ${ans.isCorrect ? 'bg-green-50' : 'bg-red-50'}`}>
+                          <div className="flex-1">
+                            <span className="font-bold mr-2 text-gray-500">{i+1}.</span>
+                            <span className="text-gray-800">{ans.q}</span>
+                          </div>
+                          <div className={`font-bold ml-4 ${ans.isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                            {ans.isCorrect ? "O" : "X"}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <h3 className="text-lg font-bold text-gray-700 mb-2 border-b pb-2">📤 提交給老師</h3>
+                    <p className="text-sm text-gray-500 mb-4">若老師有提供表單連結，可直接傳送；或複製下方文字傳給老師。</p>
+                    
+                    {teacherUrl && (
+                        <a href={teacherUrl} target="_blank" rel="noreferrer" className="block w-full text-center bg-green-600 text-white py-3 rounded-lg font-bold mb-4 hover:bg-green-700 flex items-center justify-center gap-2">
+                            <IconSend size={18}/> 開啟老師的登記表單 (請自行填入分數)
+                        </a>
+                    )}
+
+                    <textarea 
+                      readOnly 
+                      className="w-full p-3 bg-gray-100 rounded border text-sm font-mono h-32 mb-4 focus:outline-none"
+                      value={`【五下體積單元成績回報】\n姓名：${user.name}\n分數：${latest.score}\n時間：${latest.date}\n答對題數：${latest.correctCount}/${latest.totalCount}`}
+                    />
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <button onClick={() => setScreen('menu')} className="py-3 border-2 border-gray-300 rounded-lg font-bold text-gray-600 hover:bg-gray-50">
+                        回主選單
+                      </button>
+                      <button onClick={() => {
+                        setScore(0); setCurrentQ(0); setAnswers([]); setScreen('quiz');
+                      }} className="py-3 bg-purple-600 text-white rounded-lg font-bold hover:bg-purple-700 shadow">
+                        再挑戰一次
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          return <div>Loading...</div>;
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<VolumeMasterClass />);
+    </script>
+</body>
+</html>
