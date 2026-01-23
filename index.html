@@ -61,10 +61,10 @@
             <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         );
         const IconScissors = ({ className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
         );
         const IconLayers = ({ className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
         );
 
         // --- 資料設定 ---
@@ -147,75 +147,69 @@
         const InteractiveStack = () => {
           const [count, setCount] = useState(1);
           return (
-            <div className="flex flex-col items-center bg-blue-50 p-6 rounded-xl">
-              <div className="mb-4 text-xl font-bold text-blue-800">目前堆疊：{count} 個小方塊</div>
-              <div className="flex flex-wrap justify-center w-64 h-32 content-end gap-1 mb-4">
+            <div className="flex flex-col items-center bg-blue-50 p-8 rounded-xl w-full">
+              <div className="mb-6 text-2xl font-bold text-blue-800">目前堆疊：{count} 個小方塊</div>
+              <div className="flex flex-wrap justify-center w-80 h-40 content-end gap-1 mb-6">
                 {Array.from({ length: count }).map((_, i) => (
-                  <div key={i} className="relative w-10 h-10 bg-orange-400 border-2 border-orange-600 rounded shadow-md animate-bounce-short">
-                    {/* 只在第一個方塊標示尺寸，避免畫面太亂 */}
+                  <div key={i} className="relative w-14 h-14 bg-orange-400 border-2 border-orange-600 rounded shadow-md animate-bounce-short">
+                    {/* 只在第一個方塊標示尺寸 */}
                     {i === 0 && count === 1 && (
-                        <div className="absolute -top-6 left-0 w-full text-center text-xs text-gray-500 font-bold whitespace-nowrap">
+                        <div className="absolute -top-8 left-0 w-full text-center text-sm text-gray-600 font-bold whitespace-nowrap">
                            長寬高1cm
                         </div>
                     )}
-                     <div className="absolute inset-0 flex items-center justify-center text-[8px] text-orange-800 opacity-50 font-mono">1cm³</div>
+                     <div className="absolute inset-0 flex items-center justify-center text-xs text-orange-900 opacity-60 font-mono">1cm³</div>
                   </div>
                 ))}
               </div>
-              <div className="flex gap-4">
-                <button onClick={() => setCount(c => Math.max(1, c - 1))} className="px-4 py-2 bg-gray-300 rounded-full font-bold">-</button>
-                <button onClick={() => setCount(c => Math.min(12, c + 1))} className="px-4 py-2 bg-blue-500 text-white rounded-full font-bold shadow-md hover:bg-blue-600">
+              <div className="flex gap-6">
+                <button onClick={() => setCount(c => Math.max(1, c - 1))} className="w-16 h-16 flex items-center justify-center bg-gray-300 rounded-full font-bold text-3xl hover:bg-gray-400 transition">-</button>
+                <button onClick={() => setCount(c => Math.min(12, c + 1))} className="px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-xl shadow-lg hover:bg-blue-700 hover:scale-105 transition">
                   + 堆疊方塊
                 </button>
               </div>
-              <p className="mt-2 text-sm text-gray-600">每個小方塊都是 1cm × 1cm × 1cm</p>
-              <p className="text-sm font-bold text-blue-600">總體積 = {count} cm³</p>
+              <p className="mt-4 text-lg text-gray-700">每個小方塊都是 1cm × 1cm × 1cm</p>
+              <p className="text-xl font-bold text-blue-700 mt-2">總體積 = {count} cm³</p>
             </div>
           );
         };
 
-        // 概念 2 互動：長方體拉伸 (SVG 版本)
+        // 概念 2 互動：長方體拉伸 (SVG 版本 - 優化後)
         const InteractivePrism = () => {
           const [l, setL] = useState(3);
           const [w, setW] = useState(2);
           const [h, setH] = useState(2);
           
-          // 計算 SVG 繪圖參數
-          const scale = 30; // 放大倍率
-          const depthX = 15; // 深度 X 偏移 (每單位寬)
-          const depthY = -15; // 深度 Y 偏移 (每單位寬)
+          // 計算 SVG 繪圖參數 (加大版)
+          const scale = 40; // 放大倍率 (30 -> 40)
+          const depthX = 20; // 深度 X 偏移 (每單位寬)
+          const depthY = -20; // 深度 Y 偏移 (每單位寬)
           
           // 座標點
-          // 原點 (Front-Bottom-Left)
-          const startX = 50; 
-          const startY = 200; 
+          const startX = 60; 
+          const startY = 280; 
 
-          // 正面 (Front Face)
           const fW = l * scale;
           const fH = h * scale;
           
-          // 深度偏移 (Depth Offset based on Width)
           const dX = w * depthX;
           const dY = w * depthY;
 
-          // 計算各個頂點座標
-          // p1: 左下, p2: 右下, p3: 右上, p4: 左上 (正面)
+          // 計算頂點
           const p1 = { x: startX, y: startY };
           const p2 = { x: startX + fW, y: startY };
           const p3 = { x: startX + fW, y: startY - fH };
           const p4 = { x: startX, y: startY - fH };
 
-          // p5: 左下後, p6: 右下後, p7: 右上後, p8: 左上後 (背面)
           const p5 = { x: startX + dX, y: startY + dY };
           const p6 = { x: startX + fW + dX, y: startY + dY };
           const p7 = { x: startX + fW + dX, y: startY - fH + dY };
           const p8 = { x: startX + dX, y: startY - fH + dY };
 
           return (
-            <div className="flex flex-col items-center bg-green-50 p-6 rounded-xl w-full">
-              <div className="relative mb-4 flex justify-center items-center w-full" style={{ height: '250px' }}>
-                <svg width="350" height="250" className="overflow-visible">
-                    {/* 定義濾鏡或樣式 */}
+            <div className="flex flex-col items-center bg-green-50 p-8 rounded-xl w-full">
+              <div className="relative mb-6 flex justify-center items-center w-full" style={{ height: '350px' }}>
+                <svg width="500" height="350" className="overflow-visible">
                     <defs>
                         <linearGradient id="frontGrad" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="0%" stopColor="#86efac" />
@@ -229,59 +223,56 @@
                             <stop offset="0%" stopColor="#4ade80" />
                             <stop offset="100%" stopColor="#22c55e" />
                         </linearGradient>
+                        <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                          <path d="M0,0 L10,5 L0,10" fill="#374151" />
+                        </marker>
                     </defs>
 
                     {/* 後面 (虛線輔助) */}
                     <path d={`M${p5.x},${p5.y} L${p6.x},${p6.y} L${p7.x},${p7.y} L${p8.x},${p8.y} Z`} 
-                          fill="none" stroke="#cbd5e1" strokeDasharray="4" />
-                    <line x1={p1.x} y1={p1.y} x2={p5.x} y2={p5.y} stroke="#cbd5e1" strokeDasharray="4" />
+                          fill="none" stroke="#cbd5e1" strokeDasharray="4" strokeWidth="2" />
+                    <line x1={p1.x} y1={p1.y} x2={p5.x} y2={p5.y} stroke="#cbd5e1" strokeDasharray="4" strokeWidth="2"/>
                     
-                    {/* 實體面繪製 (由後往前畫) */}
-                    
-                    {/* 右側面 (Right Face: p2-p6-p7-p3) */}
+                    {/* 實體面繪製 */}
                     <path d={`M${p2.x},${p2.y} L${p6.x},${p6.y} L${p7.x},${p7.y} L${p3.x},${p3.y} Z`} 
-                          fill="url(#sideGrad)" stroke="#166534" strokeWidth="2" />
+                          fill="url(#sideGrad)" stroke="#166534" strokeWidth="3" />
 
-                    {/* 頂面 (Top Face: p4-p3-p7-p8) */}
                     <path d={`M${p4.x},${p4.y} L${p3.x},${p3.y} L${p7.x},${p7.y} L${p8.x},${p8.y} Z`} 
-                          fill="url(#topGrad)" stroke="#166534" strokeWidth="2" />
+                          fill="url(#topGrad)" stroke="#166534" strokeWidth="3" />
 
-                    {/* 正面 (Front Face: p1-p2-p3-p4) */}
                     <path d={`M${p1.x},${p1.y} L${p2.x},${p2.y} L${p3.x},${p3.y} L${p4.x},${p4.y} Z`} 
-                          fill="url(#frontGrad)" stroke="#166534" strokeWidth="2" />
+                          fill="url(#frontGrad)" stroke="#166534" strokeWidth="3" />
                     
-                    {/* 尺寸標示線與文字 */}
-                    
-                    {/* 長 (下方) */}
-                    <line x1={p1.x} y1={p1.y + 15} x2={p2.x} y2={p2.y + 15} stroke="#374151" markerEnd="url(#arrow)" markerStart="url(#arrow)"/>
-                    <text x={(p1.x+p2.x)/2} y={p1.y + 30} textAnchor="middle" fill="#374151" fontWeight="bold">長 {l}cm</text>
+                    {/* 尺寸標示線與文字 (字體加大) */}
+                    <line x1={p1.x} y1={p1.y + 25} x2={p2.x} y2={p2.y + 25} stroke="#374151" strokeWidth="2" />
+                    <text x={(p1.x+p2.x)/2} y={p1.y + 50} textAnchor="middle" fill="#374151" fontWeight="bold" fontSize="20">長 {l}cm</text>
 
-                    {/* 高 (左方) */}
-                    <line x1={p1.x - 15} y1={p1.y} x2={p4.x - 15} y2={p4.y} stroke="#374151" />
-                    <text x={p1.x - 35} y={(p1.y+p4.y)/2} textAnchor="middle" fill="#374151" fontWeight="bold" transform={`rotate(-90, ${p1.x - 35}, ${(p1.y+p4.y)/2})`}>高 {h}cm</text>
+                    <line x1={p1.x - 25} y1={p1.y} x2={p4.x - 25} y2={p4.y} stroke="#374151" strokeWidth="2" />
+                    <text x={p1.x - 45} y={(p1.y+p4.y)/2} textAnchor="middle" fill="#374151" fontWeight="bold" fontSize="20" transform={`rotate(-90, ${p1.x - 45}, ${(p1.y+p4.y)/2})`}>高 {h}cm</text>
 
-                    {/* 寬 (右上方斜線) - 標示在頂面旁邊 */}
-                    <line x1={p3.x + 5} y1={p3.y - 5} x2={p7.x + 5} y2={p7.y - 5} stroke="#374151" />
-                    <text x={(p3.x+p7.x)/2 + 10} y={(p3.y+p7.y)/2 - 10} textAnchor="start" fill="#374151" fontWeight="bold">寬 {w}cm</text>
-
-                    {/* 體積文字 - 置中顯示 */}
-                    <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" fill="#064e3b" fontSize="24" fontWeight="bold" opacity="0.9" style={{textShadow: "1px 1px 0px rgba(255,255,255,0.8)"}}>
-                        {l * w * h} cm³
-                    </text>
+                    <line x1={p3.x + 10} y1={p3.y - 10} x2={p7.x + 10} y2={p7.y - 10} stroke="#374151" strokeWidth="2" />
+                    <text x={(p3.x+p7.x)/2 + 20} y={(p3.y+p7.y)/2 - 15} textAnchor="start" fill="#374151" fontWeight="bold" fontSize="20">寬 {w}cm</text>
 
                 </svg>
               </div>
               
-              <div className="grid grid-cols-3 gap-4 mt-4 w-full max-w-sm">
+              <div className="flex gap-8 mt-6 w-full max-w-lg justify-center">
                 {[['長', l, setL], ['寬', w, setW], ['高', h, setH]].map(([label, val, setVal]) => (
-                  <div key={label} className="text-center">
-                    <label className="block text-sm font-bold text-gray-700">{label}: {val} cm</label>
+                  <div key={label} className="text-center w-1/3">
+                    <label className="block text-lg font-bold text-gray-700 mb-2">{label}: {val} cm</label>
                     <input type="range" min="1" max="5" value={val} onChange={(e) => setVal(Number(e.target.value))} 
-                           className="w-full accent-green-600 cursor-pointer" />
+                           className="w-full h-4 bg-green-200 rounded-lg appearance-none cursor-pointer accent-green-600" />
                   </div>
                 ))}
               </div>
-              <p className="mt-4 text-xl font-bold text-green-800">體積 = {l} × {w} × {h} = {l * w * h} cm³</p>
+
+              {/* 獨立顯示答案區域 */}
+              <div className="mt-8 bg-white border-l-8 border-green-500 p-6 rounded shadow-lg w-full max-w-lg flex flex-col items-center">
+                  <span className="text-gray-500 text-lg mb-1">計算過程：{l} × {w} × {h}</span>
+                  <div className="text-3xl font-bold text-green-700">
+                     答案：體積 {l * w * h} cm³
+                  </div>
+              </div>
             </div>
           );
         };
@@ -310,14 +301,14 @@
           };
 
           return (
-            <div className="bg-purple-50 p-6 rounded-xl text-center w-full">
-              <div className="text-6xl mb-4 animate-pulse">{items[idx].name.split(" ")[0]}</div>
-              <div className="text-2xl font-bold text-purple-900 mb-6">{items[idx].name.split(" ")[1]}</div>
-              <div className="flex justify-center gap-4">
-                <button onClick={() => handleGuess("cm³")} className="px-6 py-3 bg-white border-2 border-purple-500 rounded-lg hover:bg-purple-100 font-bold text-lg transition">cm³ (小)</button>
-                <button onClick={() => handleGuess("m³")} className="px-6 py-3 bg-white border-2 border-purple-500 rounded-lg hover:bg-purple-100 font-bold text-lg transition">m³ (大)</button>
+            <div className="bg-purple-50 p-8 rounded-xl text-center w-full">
+              <div className="text-8xl mb-6 animate-pulse">{items[idx].name.split(" ")[0]}</div>
+              <div className="text-4xl font-bold text-purple-900 mb-8">{items[idx].name.split(" ")[1]}</div>
+              <div className="flex justify-center gap-6">
+                <button onClick={() => handleGuess("cm³")} className="px-10 py-5 bg-white border-4 border-purple-500 rounded-2xl hover:bg-purple-100 font-bold text-2xl transition transform hover:scale-105 shadow-md">cm³ (小)</button>
+                <button onClick={() => handleGuess("m³")} className="px-10 py-5 bg-white border-4 border-purple-500 rounded-2xl hover:bg-purple-100 font-bold text-2xl transition transform hover:scale-105 shadow-md">m³ (大)</button>
               </div>
-              <div className="mt-4 h-8 text-lg font-bold text-purple-600">{feedback}</div>
+              <div className="mt-6 h-10 text-3xl font-bold text-purple-600">{feedback}</div>
             </div>
           );
         };
@@ -422,33 +413,33 @@
           if (screen === 'welcome') {
             return (
               <div className="min-h-screen bg-gradient-to-b from-blue-200 to-white flex items-center justify-center p-4">
-                <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
-                  <div className="text-6xl mb-4">📦</div>
-                  <h1 className="text-3xl font-bold text-blue-800 mb-2">五下數學：體積大師</h1>
-                  <p className="text-gray-600 mb-6">準備好變身空間魔術師了嗎？</p>
+                <div className="bg-white p-12 rounded-3xl shadow-2xl max-w-xl w-full text-center border-4 border-blue-100">
+                  <div className="text-8xl mb-6">📦</div>
+                  <h1 className="text-4xl font-bold text-blue-900 mb-4">五下數學：體積大師</h1>
+                  <p className="text-xl text-gray-600 mb-10">準備好變身空間魔術師了嗎？</p>
                   <input
                     type="text"
                     placeholder="請輸入你的姓名"
-                    className="w-full p-3 border-2 border-blue-300 rounded-lg mb-4 text-center text-lg focus:outline-none focus:border-blue-500"
+                    className="w-full p-4 border-2 border-blue-300 rounded-xl mb-6 text-center text-2xl focus:outline-none focus:border-blue-500 shadow-inner"
                     value={tempName}
                     onChange={e => setTempName(e.target.value)}
                   />
                   <button 
                     onClick={startApp}
-                    className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold text-xl hover:bg-blue-700 transition transform hover:scale-105"
+                    className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-2xl hover:bg-blue-700 transition transform hover:scale-105 shadow-lg"
                   >
                     開始學習 🚀
                   </button>
                   
-                  <div className="mt-8 pt-4 border-t text-sm text-gray-400 cursor-pointer select-none" onClick={() => setShowSettings(!showSettings)}>
-                    <IconSettings className="inline mr-1" /> 老師設定
+                  <div className="mt-12 pt-6 border-t text-base text-gray-400 cursor-pointer select-none hover:text-gray-600" onClick={() => setShowSettings(!showSettings)}>
+                    <IconSettings className="inline mr-2" /> 老師設定
                   </div>
                   {showSettings && (
-                    <div className="mt-2 text-left bg-gray-50 p-3 rounded text-xs border border-gray-200">
-                      <p className="mb-1">Google Form 預填連結 (選填):</p>
+                    <div className="mt-4 text-left bg-gray-50 p-4 rounded-lg text-sm border border-gray-200">
+                      <p className="mb-2 font-bold">Google Form 預填連結 (選填):</p>
                       <input 
                         type="text" 
-                        className="w-full border p-2 rounded mb-1" 
+                        className="w-full border p-3 rounded mb-2 text-base" 
                         placeholder="https://docs.google.com/forms/..."
                         value={teacherUrl}
                         onChange={e => saveTeacherUrl(e.target.value)}
@@ -463,41 +454,41 @@
 
           if (screen === 'menu') {
             return (
-              <div className="min-h-screen bg-blue-50 p-6">
-                <div className="max-w-4xl mx-auto">
-                  <header className="flex justify-between items-center mb-8">
-                    <h1 className="text-2xl font-bold text-blue-900">你好，{user.name} 👋</h1>
-                    <button onClick={() => setScreen('welcome')} className="text-sm text-gray-500 underline hover:text-blue-700">登出</button>
+              <div className="min-h-screen bg-blue-50 p-8">
+                <div className="max-w-6xl mx-auto">
+                  <header className="flex justify-between items-center mb-10">
+                    <h1 className="text-4xl font-bold text-blue-900">你好，{user.name} 👋</h1>
+                    <button onClick={() => setScreen('welcome')} className="text-lg text-gray-500 underline hover:text-blue-700">登出</button>
                   </header>
                   
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div onClick={() => setScreen('learn')} className="bg-white p-6 rounded-2xl shadow-lg cursor-pointer hover:shadow-2xl transition transform hover:-translate-y-1 border-l-8 border-green-400 group">
-                      <div className="flex items-center mb-4">
-                        <IconBookOpen className="w-8 h-8 text-green-500 mr-3" />
-                        <h2 className="text-2xl font-bold text-gray-800">觀念學習</h2>
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div onClick={() => setScreen('learn')} className="bg-white p-10 rounded-3xl shadow-xl cursor-pointer hover:shadow-2xl transition transform hover:-translate-y-2 border-l-[12px] border-green-400 group">
+                      <div className="flex items-center mb-6">
+                        <IconBookOpen className="w-12 h-12 text-green-500 mr-4" />
+                        <h2 className="text-3xl font-bold text-gray-800">觀念學習</h2>
                       </div>
-                      <p className="text-gray-600">圖解體積概念、互動操作，搭配超強記憶法！</p>
-                      <div className="mt-4 text-green-500 font-bold group-hover:translate-x-2 transition-transform">開始上課 &rarr;</div>
+                      <p className="text-xl text-gray-600 leading-relaxed">圖解體積概念、互動操作，搭配超強記憶法！</p>
+                      <div className="mt-6 text-green-600 font-bold text-xl group-hover:translate-x-3 transition-transform">開始上課 &rarr;</div>
                     </div>
 
                     <div onClick={() => {
                       setScore(0); setCurrentQ(0); setAnswers([]); setScreen('quiz');
-                    }} className="bg-white p-6 rounded-2xl shadow-lg cursor-pointer hover:shadow-2xl transition transform hover:-translate-y-1 border-l-8 border-orange-400 group">
-                      <div className="flex items-center mb-4">
-                        <IconAward className="w-8 h-8 text-orange-500 mr-3" />
-                        <h2 className="text-2xl font-bold text-gray-800">挑戰測驗</h2>
+                    }} className="bg-white p-10 rounded-3xl shadow-xl cursor-pointer hover:shadow-2xl transition transform hover:-translate-y-2 border-l-[12px] border-orange-400 group">
+                      <div className="flex items-center mb-6">
+                        <IconAward className="w-12 h-12 text-orange-500 mr-4" />
+                        <h2 className="text-3xl font-bold text-gray-800">挑戰測驗</h2>
                       </div>
-                      <p className="text-gray-600">20 題互動關卡，測試你是不是體積大師。</p>
-                      <div className="mt-4 text-orange-500 font-bold group-hover:translate-x-2 transition-transform">開始挑戰 &rarr;</div>
+                      <p className="text-xl text-gray-600 leading-relaxed">20 題互動關卡，測試你是不是體積大師。</p>
+                      <div className="mt-6 text-orange-600 font-bold text-xl group-hover:translate-x-3 transition-transform">開始挑戰 &rarr;</div>
                     </div>
 
-                    <div onClick={() => setScreen('report')} className="bg-white p-6 rounded-2xl shadow-lg cursor-pointer hover:shadow-2xl transition transform hover:-translate-y-1 border-l-8 border-purple-400 md:col-span-2 group">
-                      <div className="flex items-center mb-4">
-                        <IconBarChart className="w-8 h-8 text-purple-500 mr-3" />
-                        <h2 className="text-2xl font-bold text-gray-800">學習記錄</h2>
+                    <div onClick={() => setScreen('report')} className="bg-white p-10 rounded-3xl shadow-xl cursor-pointer hover:shadow-2xl transition transform hover:-translate-y-2 border-l-[12px] border-purple-400 md:col-span-2 group">
+                      <div className="flex items-center mb-6">
+                        <IconBarChart className="w-12 h-12 text-purple-500 mr-4" />
+                        <h2 className="text-3xl font-bold text-gray-800">學習記錄</h2>
                       </div>
-                      <p className="text-gray-600">查看你的成績單、答錯記錄，並匯出給老師。</p>
-                      <div className="mt-4 text-purple-500 font-bold group-hover:translate-x-2 transition-transform">查看記錄 &rarr;</div>
+                      <p className="text-xl text-gray-600 leading-relaxed">查看你的成績單、答錯記錄，並匯出給老師。</p>
+                      <div className="mt-6 text-purple-600 font-bold text-xl group-hover:translate-x-3 transition-transform">查看記錄 &rarr;</div>
                     </div>
                   </div>
                 </div>
@@ -509,87 +500,85 @@
             const concept = CONCEPTS[currentConcept];
             return (
               <div className="min-h-screen bg-gray-100 flex flex-col">
-                <div className="bg-white p-4 shadow-md flex justify-between items-center sticky top-0 z-10">
-                  <button onClick={() => setScreen('menu')} className="px-4 py-2 text-gray-600 font-bold hover:bg-gray-100 rounded">
+                <div className="bg-white p-6 shadow-md flex justify-between items-center sticky top-0 z-20">
+                  <button onClick={() => setScreen('menu')} className="px-6 py-3 text-gray-600 font-bold hover:bg-gray-100 rounded-lg text-lg">
                      &larr; 回主選單
                   </button>
-                  <div className="flex gap-2">
+                  <div className="flex gap-3">
                      {CONCEPTS.map((c, idx) => (
                        <div key={c.id} 
-                            className={`w-3 h-3 rounded-full ${idx === currentConcept ? 'bg-blue-600' : 'bg-gray-300'}`} />
+                            className={`w-4 h-4 rounded-full ${idx === currentConcept ? 'bg-blue-600 scale-125' : 'bg-gray-300'}`} />
                      ))}
                   </div>
-                  <div className="w-24"></div>
+                  <div className="w-32"></div>
                 </div>
 
-                <div className="flex-1 flex flex-col items-center justify-center p-6">
-                  <div className="max-w-2xl w-full bg-white rounded-3xl shadow-xl overflow-hidden">
-                    <div className="bg-blue-600 p-6 text-white">
-                       <h2 className="text-3xl font-bold mb-2">{concept.title}</h2>
-                       <p className="text-blue-100 text-lg whitespace-pre-wrap">{concept.desc}</p>
+                <div className="flex-1 flex flex-col items-center justify-center p-8">
+                  <div className="max-w-5xl w-full bg-white rounded-[2rem] shadow-2xl overflow-hidden border border-gray-100">
+                    <div className="bg-blue-600 p-10 text-white">
+                       <h2 className="text-4xl font-bold mb-4">{concept.title}</h2>
+                       <p className="text-blue-50 text-2xl whitespace-pre-wrap leading-relaxed">{concept.desc}</p>
                     </div>
                     
-                    <div className="p-8">
+                    <div className="p-10">
                       {/* 動態互動區 */}
-                      <div className="mb-8 min-h-[200px] flex items-center justify-center">
+                      <div className="mb-10 min-h-[300px] flex items-center justify-center">
                         {concept.type === 'stack' && <InteractiveStack />}
                         {concept.type === 'prism' && <InteractivePrism />}
                         {concept.type === 'unit-game' && <InteractiveUnitGame />}
                         {concept.type === 'cube' && (
-                          <div className="flex gap-8 justify-center">
-                            {/* 正面視圖 */}
-                            <div className="text-center">
-                              <p className="font-bold text-gray-600 mb-2">正面看 (第一層)</p>
-                              <div className="w-32 h-32 bg-orange-100 mx-auto grid grid-cols-3 grid-rows-3 gap-0.5 border-4 border-orange-600 relative">
+                          <div className="flex gap-16 justify-center w-full">
+                            <div className="text-center p-6 bg-orange-50 rounded-xl">
+                              <p className="font-bold text-xl text-gray-700 mb-4">正面看 (第一層)</p>
+                              <div className="w-48 h-48 bg-orange-100 mx-auto grid grid-cols-3 grid-rows-3 gap-1 border-4 border-orange-600 relative p-1">
                                   {Array.from({length: 9}).map((_,i) => <div key={i} className="bg-orange-300 border border-orange-500"></div>)}
-                                  <div className="absolute inset-0 flex items-center justify-center text-4xl font-bold text-orange-900 opacity-20">1</div>
+                                  <div className="absolute inset-0 flex items-center justify-center text-8xl font-bold text-orange-900 opacity-20">1</div>
                               </div>
-                              <p className="text-sm text-gray-500 mt-1">3 × 3 = 9 個</p>
+                              <p className="text-lg text-gray-600 mt-3 font-bold">3 × 3 = 9 個</p>
                             </div>
                             
-                            {/* 側面示意圖 - 用稍微傾斜或分層的方式表示 */}
-                            <div className="text-center">
-                              <p className="font-bold text-gray-600 mb-2">側面看 (有三層)</p>
-                              <div className="flex items-end justify-center h-32 space-x-1">
-                                <div className="w-8 h-32 bg-orange-300 border-2 border-orange-600 flex items-center justify-center font-bold text-orange-800">1</div>
-                                <div className="w-8 h-32 bg-orange-400 border-2 border-orange-600 flex items-center justify-center font-bold text-orange-800">2</div>
-                                <div className="w-8 h-32 bg-orange-500 border-2 border-orange-600 flex items-center justify-center font-bold text-white">3</div>
+                            <div className="text-center p-6 bg-orange-50 rounded-xl">
+                              <p className="font-bold text-xl text-gray-700 mb-4">側面看 (有三層)</p>
+                              <div className="flex items-end justify-center h-48 space-x-2">
+                                <div className="w-12 h-48 bg-orange-300 border-4 border-orange-600 flex items-center justify-center font-bold text-2xl text-orange-800 shadow-md z-30">1</div>
+                                <div className="w-12 h-48 bg-orange-400 border-4 border-orange-600 flex items-center justify-center font-bold text-2xl text-orange-800 shadow-md z-20 -ml-1">2</div>
+                                <div className="w-12 h-48 bg-orange-500 border-4 border-orange-600 flex items-center justify-center font-bold text-2xl text-white shadow-md z-10 -ml-1">3</div>
                               </div>
-                              <p className="text-sm text-gray-500 mt-1">後面還有 2 層！</p>
+                              <p className="text-lg text-gray-600 mt-3 font-bold">後面還有 2 層！</p>
                             </div>
                           </div>
                         )}
                         {concept.type === 'sense' && (
-                          <div className="text-center relative">
-                            <div className="w-64 h-64 border-4 border-dashed border-gray-400 mx-auto rounded-lg flex items-center justify-center bg-gray-50">
-                                <span className="text-4xl text-gray-300 font-bold">1 m³</span>
+                          <div className="text-center relative p-8">
+                            <div className="w-80 h-80 border-8 border-dashed border-gray-300 mx-auto rounded-2xl flex items-center justify-center bg-gray-50">
+                                <span className="text-6xl text-gray-300 font-bold">1 m³</span>
                             </div>
-                            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex items-end">
-                               <IconUser size={40} className="text-blue-500" />
-                               <IconUser size={40} className="text-red-500 -ml-2" />
-                               <IconUser size={40} className="text-green-500 -ml-2" />
+                            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-end">
+                               <IconUser size={60} className="text-blue-500" />
+                               <IconUser size={60} className="text-red-500 -ml-4" />
+                               <IconUser size={60} className="text-green-500 -ml-4" />
                             </div>
-                            <p className="mt-2 text-gray-500">大約可以容納 4-5 個小朋友蹲在裡面喔！</p>
+                            <p className="mt-4 text-2xl text-gray-600 font-bold">大約可以容納 4-5 個小朋友蹲在裡面喔！</p>
                           </div>
                         )}
                         {concept.type === 'composite' && (
                           <div className="text-center w-full">
                              <div className="flex justify-center gap-8 items-stretch">
-                                <div className="bg-red-50 p-4 rounded-xl border-2 border-red-200 flex-1 max-w-[250px]">
-                                   <IconScissors className="mx-auto mb-2 text-red-500 w-10 h-10" />
-                                   <p className="font-bold text-red-700 text-lg">🔪 切割法</p>
-                                   <p className="text-sm text-gray-600 my-2">把形狀切成好幾塊長方體，分別算出體積再加起來。</p>
-                                   <div className="bg-white p-2 rounded text-xs text-left border border-red-100">
-                                     <strong>舉例：樓梯形狀</strong><br/>
+                                <div className="bg-red-50 p-8 rounded-2xl border-2 border-red-200 flex-1 max-w-sm hover:shadow-lg transition">
+                                   <IconScissors className="mx-auto mb-4 text-red-500 w-16 h-16" />
+                                   <p className="font-bold text-red-700 text-2xl mb-2">🔪 切割法</p>
+                                   <p className="text-lg text-gray-600 my-4 leading-relaxed">把形狀切成好幾塊長方體，分別算出體積再加起來。</p>
+                                   <div className="bg-white p-4 rounded-xl text-base text-left border border-red-100 shadow-sm text-gray-700">
+                                     <strong className="text-red-600 block mb-1">舉例：樓梯形狀</strong>
                                      切成三塊像「階梯」一樣的長方體，算出每一階的體積，最後加總。
                                    </div>
                                 </div>
-                                <div className="bg-blue-50 p-4 rounded-xl border-2 border-blue-200 flex-1 max-w-[250px]">
-                                   <IconLayers className="mx-auto mb-2 text-blue-500 w-10 h-10" />
-                                   <p className="font-bold text-blue-700 text-lg">🧱 填補法</p>
-                                   <p className="text-sm text-gray-600 my-2">把空缺補起來變成一個大長方體，算出體積後再減掉補的部分。</p>
-                                   <div className="bg-white p-2 rounded text-xs text-left border border-blue-100">
-                                     <strong>舉例：缺角的盒子/ㄈ字型</strong><br/>
+                                <div className="bg-blue-50 p-8 rounded-2xl border-2 border-blue-200 flex-1 max-w-sm hover:shadow-lg transition">
+                                   <IconLayers className="mx-auto mb-4 text-blue-500 w-16 h-16" />
+                                   <p className="font-bold text-blue-700 text-2xl mb-2">🧱 填補法</p>
+                                   <p className="text-lg text-gray-600 my-4 leading-relaxed">把空缺補起來變成一個大長方體，算出體積後再減掉補的部分。</p>
+                                   <div className="bg-white p-4 rounded-xl text-base text-left border border-blue-100 shadow-sm text-gray-700">
+                                     <strong className="text-blue-600 block mb-1">舉例：缺角的盒子</strong>
                                      先假裝它是完整的長方體算出大體積，再扣掉中間空心的體積。
                                    </div>
                                 </div>
@@ -598,25 +587,25 @@
                         )}
                       </div>
 
-                      {/* 超強記憶區 */}
-                      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
-                        <p className="text-yellow-800 font-bold text-lg whitespace-pre-line">{concept.memory}</p>
+                      {/* 超強記憶區 (加大) */}
+                      <div className="bg-yellow-50 border-l-8 border-yellow-400 p-8 rounded-r-2xl shadow-sm">
+                        <p className="text-yellow-900 font-bold text-2xl whitespace-pre-line leading-loose">{concept.memory}</p>
                       </div>
                       
                       {concept.type === 'cube' && (
-                        <div className="mt-4 text-center">
-                            <p className="text-xl font-bold text-orange-600 bg-orange-50 inline-block px-4 py-2 rounded-lg border border-orange-200">
+                        <div className="mt-8 text-center">
+                            <p className="text-3xl font-bold text-orange-600 bg-orange-50 inline-block px-8 py-4 rounded-2xl border-2 border-orange-200 shadow">
                                 體積 = 邊長 × 邊長 × 邊長 = 3 × 3 × 3 = 27
                             </p>
                         </div>
                       )}
                     </div>
 
-                    <div className="bg-gray-50 p-4 flex justify-between">
+                    <div className="bg-gray-50 p-8 flex justify-between border-t border-gray-200">
                       <button 
                         onClick={() => setCurrentConcept(c => Math.max(0, c - 1))}
                         disabled={currentConcept === 0}
-                        className="px-6 py-2 rounded-lg bg-white border hover:bg-gray-100 disabled:opacity-50"
+                        className="px-8 py-3 rounded-xl bg-white border-2 border-gray-300 text-xl font-bold text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
                       >
                         上一頁
                       </button>
@@ -628,7 +617,7 @@
                                 setScreen('menu');
                             }
                         }}
-                        className="px-6 py-2 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-md"
+                        className="px-8 py-3 rounded-xl bg-blue-600 text-white font-bold text-xl hover:bg-blue-700 shadow-lg hover:shadow-xl transition transform hover:-translate-y-1"
                       >
                         {currentConcept === CONCEPTS.length - 1 ? "完成學習" : "下一頁"}
                       </button>
@@ -645,34 +634,34 @@
 
             return (
               <div className="min-h-screen bg-indigo-50 flex flex-col">
-                <div className="w-full bg-gray-200 h-2">
-                  <div className="bg-indigo-500 h-2 transition-all duration-500" style={{ width: `${progress}%` }}></div>
+                <div className="w-full bg-gray-200 h-3">
+                  <div className="bg-indigo-500 h-3 transition-all duration-500" style={{ width: `${progress}%` }}></div>
                 </div>
                 
-                <div className="flex-1 flex items-center justify-center p-4">
-                  <div className="max-w-2xl w-full bg-white rounded-3xl shadow-xl overflow-hidden p-8 relative">
-                    <div className="absolute top-4 right-4 text-indigo-200 font-bold text-4xl">
-                      {currentQ + 1} <span className="text-xl">/ {QUESTIONS.length}</span>
+                <div className="flex-1 flex items-center justify-center p-8">
+                  <div className="max-w-4xl w-full bg-white rounded-[2rem] shadow-2xl overflow-hidden p-12 relative">
+                    <div className="absolute top-8 right-8 text-indigo-200 font-bold text-5xl">
+                      {currentQ + 1} <span className="text-2xl">/ {QUESTIONS.length}</span>
                     </div>
 
-                    <h2 className="text-2xl font-bold text-gray-800 mb-8 pr-12 leading-relaxed">
+                    <h2 className="text-4xl font-bold text-gray-800 mb-12 pr-20 leading-relaxed">
                       {q.q}
                     </h2>
 
                     {!showFeedback ? (
-                      <div className="grid gap-4">
+                      <div className="grid gap-6">
                         {q.type === 'tf' ? (
-                          <div className="flex gap-4 h-32">
-                            <button onClick={() => handleAnswer(true)} className="flex-1 bg-green-100 hover:bg-green-200 text-green-700 rounded-xl text-5xl font-bold flex items-center justify-center border-2 border-green-200 transition-transform hover:scale-105">O</button>
-                            <button onClick={() => handleAnswer(false)} className="flex-1 bg-red-100 hover:bg-red-200 text-red-700 rounded-xl text-5xl font-bold flex items-center justify-center border-2 border-red-200 transition-transform hover:scale-105">X</button>
+                          <div className="flex gap-8 h-48">
+                            <button onClick={() => handleAnswer(true)} className="flex-1 bg-green-50 hover:bg-green-100 text-green-600 rounded-3xl text-7xl font-bold flex items-center justify-center border-4 border-green-200 transition-transform hover:scale-105 shadow-md">O</button>
+                            <button onClick={() => handleAnswer(false)} className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 rounded-3xl text-7xl font-bold flex items-center justify-center border-4 border-red-200 transition-transform hover:scale-105 shadow-md">X</button>
                           </div>
                         ) : (
-                          <div className="grid grid-cols-1 gap-3">
+                          <div className="grid grid-cols-1 gap-4">
                             {q.options.map((opt, idx) => (
                               <button 
                                 key={idx} 
                                 onClick={() => handleAnswer(opt)}
-                                className="text-left p-4 rounded-xl border-2 border-indigo-100 hover:bg-indigo-50 hover:border-indigo-300 text-lg font-medium transition-colors"
+                                className="text-left p-6 rounded-2xl border-2 border-indigo-100 hover:bg-indigo-50 hover:border-indigo-400 text-2xl font-medium transition-all shadow-sm"
                               >
                                 {opt}
                               </button>
@@ -681,17 +670,17 @@
                         )}
                       </div>
                     ) : (
-                      <div className="text-center animate-fade-in">
-                        <div className={`flex justify-center mb-4 ${currentAns.correct ? 'text-green-500' : 'text-red-500'}`}>
-                          {currentAns.correct ? <IconCheck size={80} /> : <IconX size={80} />}
+                      <div className="text-center animate-fade-in py-8">
+                        <div className={`flex justify-center mb-6 ${currentAns.correct ? 'text-green-500' : 'text-red-500'}`}>
+                          {currentAns.correct ? <IconCheck size={120} /> : <IconX size={120} />}
                         </div>
-                        <h3 className={`text-2xl font-bold mb-2 ${currentAns.correct ? 'text-green-700' : 'text-red-700'}`}>
+                        <h3 className={`text-4xl font-bold mb-4 ${currentAns.correct ? 'text-green-700' : 'text-red-700'}`}>
                           {currentAns.correct ? "答對了！" : "答錯囉！"}
                         </h3>
-                        <div className="bg-gray-100 p-4 rounded-lg text-gray-700 mb-6 text-lg">
+                        <div className="bg-gray-100 p-6 rounded-2xl text-gray-700 mb-10 text-2xl border border-gray-200">
                           💡 {currentAns.hint}
                         </div>
-                        <button onClick={nextQuestion} className="px-8 py-3 bg-indigo-600 text-white rounded-full font-bold text-xl hover:bg-indigo-700 shadow-lg hover:shadow-xl transition-transform hover:-translate-y-1">
+                        <button onClick={nextQuestion} className="px-12 py-4 bg-indigo-600 text-white rounded-full font-bold text-2xl hover:bg-indigo-700 shadow-xl hover:shadow-2xl transition-transform hover:-translate-y-1">
                           {currentQ < QUESTIONS.length - 1 ? "下一題" : "看成績"}
                         </button>
                       </div>
@@ -706,65 +695,65 @@
             const latest = user.history[0] || {};
             
             return (
-              <div className="min-h-screen bg-gray-50 p-6">
-                <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
-                  <div className="bg-purple-600 p-6 text-white text-center">
-                    <h2 className="text-3xl font-bold mb-2">學習成績單</h2>
-                    <p className="opacity-90">姓名：{user.name}</p>
+              <div className="min-h-screen bg-gray-50 p-8">
+                <div className="max-w-4xl mx-auto bg-white rounded-[2rem] shadow-2xl overflow-hidden">
+                  <div className="bg-purple-600 p-10 text-white text-center">
+                    <h2 className="text-4xl font-bold mb-3">學習成績單</h2>
+                    <p className="opacity-90 text-xl">姓名：{user.name}</p>
                   </div>
 
-                  <div className="p-8">
-                    <div className="text-center mb-8">
-                      <div className="inline-block p-6 rounded-full bg-purple-50 border-4 border-purple-200 mb-4">
-                        <span className="text-5xl font-bold text-purple-700">{latest.score}</span>
-                        <span className="text-xl text-purple-400"> 分</span>
+                  <div className="p-12">
+                    <div className="text-center mb-12">
+                      <div className="inline-block p-10 rounded-full bg-purple-50 border-8 border-purple-200 mb-6">
+                        <span className="text-7xl font-bold text-purple-700">{latest.score}</span>
+                        <span className="text-3xl text-purple-400"> 分</span>
                       </div>
-                      <p className="text-gray-600">
+                      <p className="text-2xl text-gray-600">
                         答對 {latest.correctCount} / {latest.totalCount} 題 ({latest.date})
                       </p>
-                      <div className="mt-2 text-lg font-bold text-purple-600">
+                      <div className="mt-4 text-3xl font-bold text-purple-600">
                         {latest.score >= 90 ? "太強了！你是體積大師！🏆" : 
                          latest.score >= 60 ? "很棒喔！繼續加油！💪" : "別氣餒，再複習一次觀念吧！📚"}
                       </div>
                     </div>
 
-                    <h3 className="text-lg font-bold text-gray-700 mb-4 border-b pb-2">答題詳情</h3>
-                    <div className="space-y-3 mb-8 max-h-60 overflow-y-auto pr-2">
+                    <h3 className="text-2xl font-bold text-gray-700 mb-6 border-b pb-4">答題詳情</h3>
+                    <div className="space-y-4 mb-10 max-h-80 overflow-y-auto pr-4">
                       {latest.details && latest.details.map((ans, i) => (
-                        <div key={i} className={`flex justify-between items-center p-3 rounded ${ans.isCorrect ? 'bg-green-50' : 'bg-red-50'}`}>
+                        <div key={i} className={`flex justify-between items-center p-5 rounded-xl text-lg ${ans.isCorrect ? 'bg-green-50' : 'bg-red-50'}`}>
                           <div className="flex-1">
-                            <span className="font-bold mr-2 text-gray-500">{i+1}.</span>
+                            <span className="font-bold mr-4 text-gray-500">{i+1}.</span>
                             <span className="text-gray-800">{ans.q}</span>
                           </div>
-                          <div className={`font-bold ml-4 ${ans.isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                          <div className={`font-bold ml-6 text-2xl ${ans.isCorrect ? 'text-green-600' : 'text-red-600'}`}>
                             {ans.isCorrect ? "O" : "X"}
                           </div>
                         </div>
                       ))}
                     </div>
 
-                    <h3 className="text-lg font-bold text-gray-700 mb-2 border-b pb-2">📤 提交給老師</h3>
-                    <p className="text-sm text-gray-500 mb-4">若老師有提供表單連結，可直接傳送；或複製下方文字傳給老師。</p>
+                    <h3 className="text-2xl font-bold text-gray-700 mb-4 border-b pb-4">📤 提交給老師</h3>
+                    <p className="text-lg text-gray-500 mb-6">若老師有提供表單連結，可直接傳送；或複製下方文字傳給老師。</p>
                     
                     {teacherUrl && (
-                        <a href={teacherUrl} target="_blank" rel="noreferrer" className="block w-full text-center bg-green-600 text-white py-3 rounded-lg font-bold mb-4 hover:bg-green-700 flex items-center justify-center gap-2">
-                            <IconSend size={18}/> 開啟老師的登記表單 (請自行填入分數)
+                        <a href={teacherUrl} target="_blank" rel="noreferrer" className="block w-full text-center bg-green-600 text-white py-4 rounded-xl font-bold text-xl mb-6 hover:bg-green-700 flex items-center justify-center gap-3 shadow-md hover:-translate-y-1 transition">
+                            <IconSend size={24}/> 開啟老師的登記表單 (請自行填入分數)
                         </a>
                     )}
 
                     <textarea 
                       readOnly 
-                      className="w-full p-3 bg-gray-100 rounded border text-sm font-mono h-32 mb-4 focus:outline-none"
+                      className="w-full p-5 bg-gray-100 rounded-xl border-2 border-gray-200 text-lg font-mono h-40 mb-8 focus:outline-none"
                       value={`【五下體積單元成績回報】\n姓名：${user.name}\n分數：${latest.score}\n時間：${latest.date}\n答對題數：${latest.correctCount}/${latest.totalCount}`}
                     />
                     
-                    <div className="grid grid-cols-2 gap-4">
-                      <button onClick={() => setScreen('menu')} className="py-3 border-2 border-gray-300 rounded-lg font-bold text-gray-600 hover:bg-gray-50">
+                    <div className="grid grid-cols-2 gap-6">
+                      <button onClick={() => setScreen('menu')} className="py-4 border-2 border-gray-300 rounded-xl font-bold text-xl text-gray-600 hover:bg-gray-50 transition">
                         回主選單
                       </button>
                       <button onClick={() => {
                         setScore(0); setCurrentQ(0); setAnswers([]); setScreen('quiz');
-                      }} className="py-3 bg-purple-600 text-white rounded-lg font-bold hover:bg-purple-700 shadow">
+                      }} className="py-4 bg-purple-600 text-white rounded-xl font-bold text-xl hover:bg-purple-700 shadow-lg transition">
                         再挑戰一次
                       </button>
                     </div>
