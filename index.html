@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>五下數學：體積大師v0127</title>
+    <title>五下數學：體積大師</title>
     <!-- 引入 Tailwind CSS (美化樣式) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 React 和 Babel (核心邏輯) -->
@@ -68,6 +68,12 @@
         );
         const IconArrowLeftRight = ({ size = 24, className }) => (
              <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
+        );
+        const IconInfo = ({ size = 20, className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        );
+        const IconCloudUpload = ({ size = 24, className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         );
 
         // --- 資料設定 ---
@@ -147,7 +153,7 @@
           { id: 18, type: "mc", q: "長 100cm, 寬 100cm, 高 100cm 的正方體，體積是？", options: ["A. 1 cm³", "B. 1 m³", "C. 100 m³", "D. 10 m³"], ans: "B", hint: "100cm = 1m，所以是 1 m³。" },
           { id: 19, type: "mc", q: "求複合圖形體積時，哪種方法是錯誤的？", options: ["A. 切割成兩個長方體", "B. 補成大長方體再扣除", "C. 直接把所有邊長加起來", "D. 分塊計算再相加"], ans: "C", hint: "體積是乘法概念，不是邊長相加喔。" },
           { id: 20, type: "tf", q: "體積越大的物體，重量一定越重。", ans: false, hint: "不一定喔！一大團棉花可能比一小塊鐵還輕。" },
-          // 新增題目：單位換算 (循序漸近)
+          // 換算題目 (21-30)
           { id: 21, type: "mc", q: "2 立方公尺 = （ ）立方公分？", options: ["A. 200", "B. 20000", "C. 2000000", "D. 200000"], ans: "C", hint: "1 m³ = 1,000,000 cm³，所以 2 m³ 就是 200 萬。" },
           { id: 22, type: "mc", q: "12 立方公尺 = （ ）立方公分？", options: ["A. 12000000", "B. 120000", "C. 1200", "D. 1200000"], ans: "A", hint: "12 後面補 6 個 0，就是 1200 萬。" },
           { id: 23, type: "mc", q: "5000000 立方公分 = （ ）立方公尺？", options: ["A. 50", "B. 500", "C. 0.5", "D. 5"], ans: "D", hint: "劃掉 6 個 0：5,000,000 → 5。" },
@@ -161,7 +167,6 @@
         ];
 
         // --- 互動組件 ---
-
         const InteractiveStack = () => {
           const [count, setCount] = useState(1);
           return (
@@ -195,23 +200,10 @@
           const [l, setL] = useState(3);
           const [w, setW] = useState(2);
           const [h, setH] = useState(2);
-          const scale = 40; 
-          const depthX = 20; 
-          const depthY = -20; 
-          const startX = 60; 
-          const startY = 280; 
-          const fW = l * scale;
-          const fH = h * scale;
-          const dX = w * depthX;
-          const dY = w * depthY;
-          const p1 = { x: startX, y: startY };
-          const p2 = { x: startX + fW, y: startY };
-          const p3 = { x: startX + fW, y: startY - fH };
-          const p4 = { x: startX, y: startY - fH };
-          const p5 = { x: startX + dX, y: startY + dY };
-          const p6 = { x: startX + fW + dX, y: startY + dY };
-          const p7 = { x: startX + fW + dX, y: startY - fH + dY };
-          const p8 = { x: startX + dX, y: startY - fH + dY };
+          const scale = 40; const depthX = 20; const depthY = -20; const startX = 60; const startY = 280; 
+          const fW = l * scale; const fH = h * scale; const dX = w * depthX; const dY = w * depthY;
+          const p1 = { x: startX, y: startY }; const p2 = { x: startX + fW, y: startY }; const p3 = { x: startX + fW, y: startY - fH }; const p4 = { x: startX, y: startY - fH };
+          const p5 = { x: startX + dX, y: startY + dY }; const p6 = { x: startX + fW + dX, y: startY + dY }; const p7 = { x: startX + fW + dX, y: startY - fH + dY }; const p8 = { x: startX + dX, y: startY - fH + dY };
 
           return (
             <div className="flex flex-col items-center bg-green-50 p-8 rounded-xl w-full">
@@ -234,15 +226,11 @@
                           <path d="M0,0 L10,5 L0,10" fill="#374151" />
                         </marker>
                     </defs>
-                    <path d={`M${p5.x},${p5.y} L${p6.x},${p6.y} L${p7.x},${p7.y} L${p8.x},${p8.y} Z`} 
-                          fill="none" stroke="#cbd5e1" strokeDasharray="4" strokeWidth="2" />
+                    <path d={`M${p5.x},${p5.y} L${p6.x},${p6.y} L${p7.x},${p7.y} L${p8.x},${p8.y} Z`} fill="none" stroke="#cbd5e1" strokeDasharray="4" strokeWidth="2" />
                     <line x1={p1.x} y1={p1.y} x2={p5.x} y2={p5.y} stroke="#cbd5e1" strokeDasharray="4" strokeWidth="2"/>
-                    <path d={`M${p2.x},${p2.y} L${p6.x},${p6.y} L${p7.x},${p7.y} L${p3.x},${p3.y} Z`} 
-                          fill="url(#sideGrad)" stroke="#166534" strokeWidth="3" />
-                    <path d={`M${p4.x},${p4.y} L${p3.x},${p3.y} L${p7.x},${p7.y} L${p8.x},${p8.y} Z`} 
-                          fill="url(#topGrad)" stroke="#166534" strokeWidth="3" />
-                    <path d={`M${p1.x},${p1.y} L${p2.x},${p2.y} L${p3.x},${p3.y} L${p4.x},${p4.y} Z`} 
-                          fill="url(#frontGrad)" stroke="#166534" strokeWidth="3" />
+                    <path d={`M${p2.x},${p2.y} L${p6.x},${p6.y} L${p7.x},${p7.y} L${p3.x},${p3.y} Z`} fill="url(#sideGrad)" stroke="#166534" strokeWidth="3" />
+                    <path d={`M${p4.x},${p4.y} L${p3.x},${p3.y} L${p7.x},${p7.y} L${p8.x},${p8.y} Z`} fill="url(#topGrad)" stroke="#166534" strokeWidth="3" />
+                    <path d={`M${p1.x},${p1.y} L${p2.x},${p2.y} L${p3.x},${p3.y} L${p4.x},${p4.y} Z`} fill="url(#frontGrad)" stroke="#166534" strokeWidth="3" />
                     <line x1={p1.x} y1={p1.y + 25} x2={p2.x} y2={p2.y + 25} stroke="#374151" strokeWidth="2" />
                     <text x={(p1.x+p2.x)/2} y={p1.y + 50} textAnchor="middle" fill="#374151" fontWeight="bold" fontSize="20">長 {l}cm</text>
                     <line x1={p1.x - 25} y1={p1.y} x2={p4.x - 25} y2={p4.y} stroke="#374151" strokeWidth="2" />
@@ -305,7 +293,6 @@
           );
         };
         
-        // --- 新增互動組件：單位換算 ---
         const InteractiveConversion = () => {
             const [mode, setMode] = useState('m_to_cm'); // m_to_cm or cm_to_m
             const [val, setVal] = useState(1);
@@ -366,7 +353,7 @@
 
         // --- 主應用程式 ---
         function VolumeMasterClass() {
-          const [screen, setScreen] = useState('welcome'); // welcome, learn, quiz, report
+          const [screen, setScreen] = useState('welcome');
           const [user, setUser] = useState({ name: '', history: [] });
           const [tempName, setTempName] = useState('');
           const [currentConcept, setCurrentConcept] = useState(0);
@@ -377,8 +364,10 @@
           const [showFeedback, setShowFeedback] = useState(false);
           const [currentAns, setCurrentAns] = useState(null);
 
-          const [teacherUrl, setTeacherUrl] = useState("");
+          // 直接設定您提供的 GAS 網址作為預設值
+          const [teacherUrl, setTeacherUrl] = useState("https://script.google.com/macros/s/AKfycbxr4w817Y7RjYRDFVKJtJiAdpLZTqWmSpJBHtP-GJqPaqnHj_PKczSkkYJZtM6JJ1E/exec"); 
           const [showSettings, setShowSettings] = useState(false);
+          const [isSubmitting, setIsSubmitting] = useState(false);
 
           useEffect(() => {
             const saved = localStorage.getItem('volumeMasterUser');
@@ -457,10 +446,76 @@
             }
           };
 
+          // GAS 提交邏輯
+          const submitToGAS = async () => {
+            if (!teacherUrl) return;
+            setIsSubmitting(true);
+            
+            const latest = user.history[0] || {};
+            const detailsStr = latest.details ? latest.details.map((a, i) => `${i+1}:${a.isCorrect ? 'O' : `X(${a.userAns})`}`).join(', ') : '無詳細資料';
+            
+            const payload = {
+                name: user.name,
+                score: latest.score,
+                correctCount: latest.correctCount,
+                totalCount: latest.totalCount,
+                details: detailsStr
+            };
+
+            try {
+                // 使用 no-cors 模式以避免跨域問題
+                await fetch(teacherUrl, {
+                    method: 'POST',
+                    mode: 'no-cors', 
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                alert('✅ 成績已成功上傳給老師！');
+            } catch (error) {
+                console.error('Upload Error:', error);
+                alert('❌ 上傳失敗，請檢查網路或網址是否正確。');
+            } finally {
+                setIsSubmitting(false);
+            }
+          };
+
+          // 老師設定畫面 (GAS 版本)
+          const TeacherSettingsPanel = () => (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div className="bg-white rounded-2xl p-8 max-w-2xl w-full shadow-2xl overflow-y-auto max-h-[90vh]">
+                    <h3 className="text-2xl font-bold mb-4 flex items-center gap-2 text-gray-800">
+                        <IconSettings /> 老師設定：Google Apps Script 串接
+                    </h3>
+                    
+                    <div className="space-y-4 text-gray-600">
+                        <p>目前已設定預設的 Apps Script 網址，學生作答後成績會自動寫入您的 Google 試算表。</p>
+                        
+                        <div>
+                            <label className="block font-bold mb-1 text-gray-700">GAS 網頁應用程式網址：</label>
+                            <input 
+                                type="text" 
+                                className="w-full border-2 border-gray-300 p-3 rounded-lg focus:border-blue-500 outline-none font-mono text-sm" 
+                                placeholder="https://script.google.com/macros/s/.../exec"
+                                value={teacherUrl}
+                                onChange={e => saveTeacherUrl(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="mt-8 flex justify-end">
+                        <button onClick={() => setShowSettings(false)} className="px-6 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700">完成設定</button>
+                    </div>
+                </div>
+            </div>
+          );
+
           if (screen === 'welcome') {
             return (
               <div className="min-h-screen bg-gradient-to-b from-blue-200 to-white flex items-center justify-center p-4">
-                <div className="bg-white p-12 rounded-3xl shadow-2xl max-w-xl w-full text-center border-4 border-blue-100">
+                <div className="bg-white p-12 rounded-3xl shadow-2xl max-w-xl w-full text-center border-4 border-blue-100 relative">
                   <div className="text-8xl mb-6">📦</div>
                   <h1 className="text-4xl font-bold text-blue-900 mb-4">五下數學：體積大師</h1>
                   <p className="text-xl text-gray-600 mb-10">準備好變身空間魔術師了嗎？</p>
@@ -478,22 +533,11 @@
                     開始學習 🚀
                   </button>
                   
-                  <div className="mt-12 pt-6 border-t text-base text-gray-400 cursor-pointer select-none hover:text-gray-600" onClick={() => setShowSettings(!showSettings)}>
-                    <IconSettings className="inline mr-2" /> 老師設定
+                  <div className="mt-12 pt-6 border-t text-base text-gray-400 cursor-pointer select-none hover:text-gray-600 flex justify-center items-center gap-2" onClick={() => setShowSettings(true)}>
+                    <IconSettings className="inline" /> 老師設定 (試算表串接)
                   </div>
-                  {showSettings && (
-                    <div className="mt-4 text-left bg-gray-50 p-4 rounded-lg text-sm border border-gray-200">
-                      <p className="mb-2 font-bold">Google Form 預填連結 (選填):</p>
-                      <input 
-                        type="text" 
-                        className="w-full border p-3 rounded mb-2 text-base" 
-                        placeholder="https://docs.google.com/forms/..."
-                        value={teacherUrl}
-                        onChange={e => saveTeacherUrl(e.target.value)}
-                      />
-                      <p className="text-gray-500">若設定此連結，學生查看成績單時可點擊「傳送給老師」。</p>
-                    </div>
-                  )}
+                  
+                  {showSettings && <TeacherSettingsPanel />}
                 </div>
               </div>
             );
@@ -504,7 +548,10 @@
               <div className="min-h-screen bg-blue-50 p-8">
                 <div className="max-w-6xl mx-auto">
                   <header className="flex justify-between items-center mb-10">
-                    <h1 className="text-4xl font-bold text-blue-900">你好，{user.name} 👋</h1>
+                    <div className="flex items-center gap-4">
+                        <h1 className="text-4xl font-bold text-blue-900">你好，{user.name} 👋</h1>
+                        <button onClick={() => setShowSettings(true)} className="text-gray-400 hover:text-blue-600" title="老師設定"><IconSettings /></button>
+                    </div>
                     <button onClick={() => setScreen('welcome')} className="text-lg text-gray-500 underline hover:text-blue-700">登出</button>
                   </header>
                   
@@ -538,6 +585,7 @@
                       <div className="mt-6 text-purple-600 font-bold text-xl group-hover:translate-x-3 transition-transform">查看記錄 &rarr;</div>
                     </div>
                   </div>
+                  {showSettings && <TeacherSettingsPanel />}
                 </div>
               </div>
             );
@@ -779,12 +827,16 @@
                     </div>
 
                     <h3 className="text-2xl font-bold text-gray-700 mb-4 border-b pb-4">📤 提交給老師</h3>
-                    <p className="text-lg text-gray-500 mb-6">若老師有提供表單連結，可直接傳送；或複製下方文字傳給老師。</p>
+                    <p className="text-lg text-gray-500 mb-6">若老師有設定串接網址，點擊下方按鈕即可將成績自動填入並提交。</p>
                     
-                    {teacherUrl && (
-                        <a href={teacherUrl} target="_blank" rel="noreferrer" className="block w-full text-center bg-green-600 text-white py-4 rounded-xl font-bold text-xl mb-6 hover:bg-green-700 flex items-center justify-center gap-3 shadow-md hover:-translate-y-1 transition">
-                            <IconSend size={24}/> 開啟老師的登記表單 (請自行填入分數)
-                        </a>
+                    {teacherUrl ? (
+                        <button onClick={submitToGAS} disabled={isSubmitting} className={`block w-full text-center text-white py-4 rounded-xl font-bold text-xl mb-6 shadow-md transition flex items-center justify-center gap-3 ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700 hover:-translate-y-1'}`}>
+                            {isSubmitting ? '正在上傳中...' : <><IconCloudUpload size={24}/> 上傳成績到 Google 試算表</>}
+                        </button>
+                    ) : (
+                        <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mb-6 text-yellow-800 text-center">
+                            ⚠️ 老師尚未設定上傳連結，請手動告知老師分數。
+                        </div>
                     )}
 
                     <textarea 
@@ -804,6 +856,7 @@
                       </button>
                     </div>
                   </div>
+                  {showSettings && <TeacherSettingsPanel />}
                 </div>
               </div>
             );
