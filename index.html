@@ -131,8 +131,8 @@
           }
         ];
 
-        const QUESTIONS = [
-          // 原有題目 (1-20)
+        // 題庫 1：基礎觀念題 (30題)
+        const QUESTIONS_BASIC = [
           { id: 1, type: "tf", q: "體積是用來表示物體佔空間的大小。", ans: true, hint: "沒錯，這就是體積的定義！" },
           { id: 2, type: "tf", q: "長方體只要知道長和寬就能算體積。", ans: false, hint: "還少了一個「高」喔！" },
           { id: 3, type: "tf", q: "正方體的三個邊長都一樣。", ans: true, hint: "是的，長=寬=高。" },
@@ -153,7 +153,6 @@
           { id: 18, type: "mc", q: "長 100cm, 寬 100cm, 高 100cm 的正方體，體積是？", options: ["A. 1 cm³", "B. 1 m³", "C. 100 m³", "D. 10 m³"], ans: "B", hint: "100cm = 1m，所以是 1 m³。" },
           { id: 19, type: "mc", q: "求複合圖形體積時，哪種方法是錯誤的？", options: ["A. 切割成兩個長方體", "B. 補成大長方體再扣除", "C. 直接把所有邊長加起來", "D. 分塊計算再相加"], ans: "C", hint: "體積是乘法概念，不是邊長相加喔。" },
           { id: 20, type: "tf", q: "體積越大的物體，重量一定越重。", ans: false, hint: "不一定喔！一大團棉花可能比一小塊鐵還輕。" },
-          // 換算題目 (21-30)
           { id: 21, type: "mc", q: "2 立方公尺 = （ ）立方公分？", options: ["A. 200", "B. 20000", "C. 2000000", "D. 200000"], ans: "C", hint: "1 m³ = 1,000,000 cm³，所以 2 m³ 就是 200 萬。" },
           { id: 22, type: "mc", q: "12 立方公尺 = （ ）立方公分？", options: ["A. 12000000", "B. 120000", "C. 1200", "D. 1200000"], ans: "A", hint: "12 後面補 6 個 0，就是 1200 萬。" },
           { id: 23, type: "mc", q: "5000000 立方公分 = （ ）立方公尺？", options: ["A. 50", "B. 500", "C. 0.5", "D. 5"], ans: "D", hint: "劃掉 6 個 0：5,000,000 → 5。" },
@@ -166,7 +165,49 @@
           { id: 30, type: "mc", q: "920000000 立方公分 = （ ）立方公尺？", options: ["A. 92", "B. 9200", "C. 920", "D. 9.2"], ans: "C", hint: "9 億 2 千萬立方公分 = 920 立方公尺。" }
         ];
 
-        // --- 互動組件 ---
+        // 題庫 2：課後練習卷 (25題 - 基於附件檔案)
+        const QUESTIONS_PRACTICE = [
+          // 基礎體積計算 (隨堂練習單)
+          { id: 1, type: "mc", q: "一個邊長 30 公分的正方體，體積是多少立方公分？", options: ["A. 900", "B. 27000", "C. 3000", "D. 2700"], ans: "B", hint: "30 × 30 × 30 = 27000。" },
+          { id: 2, type: "mc", q: "一個邊長 4 公尺的正方體，體積是多少立方公尺？", options: ["A. 64", "B. 16", "C. 12", "D. 400"], ans: "A", hint: "4 × 4 × 4 = 64。" },
+          { id: 3, type: "mc", q: "長 12cm、寬 8cm、高 7cm 的長方體，體積是多少？", options: ["A. 27", "B. 672", "C. 96", "D. 84"], ans: "B", hint: "12 × 8 × 7 = 672。" },
+          { id: 4, type: "mc", q: "長 4m、寬 3m、高 2m 的長方體木箱，體積是多少立方公尺？", options: ["A. 9", "B. 24", "C. 12", "D. 48"], ans: "B", hint: "4 × 3 × 2 = 24。" },
+          
+          // 逆向思考 (隨堂練習單)
+          { id: 5, type: "mc", q: "一個長方體體積是 672 立方公分，已知長 12 公分、寬 8 公分，高是多少？", options: ["A. 6", "B. 7", "C. 8", "D. 9"], ans: "B", hint: "672 ÷ 12 ÷ 8 = 7。" },
+          { id: 6, type: "mc", q: "正方體的邊長總和是 60 公分，它的體積是多少？", options: ["A. 125", "B. 216", "C. 1000", "D. 3375"], ans: "A", hint: "正方體有 12 條邊，60 ÷ 12 = 5 (邊長)，5 × 5 × 5 = 125。" },
+          
+          // 宅配箱素養題 (素養單元學習單)
+          { id: 7, type: "mc", q: "【宅配箱】扁形箱(長31,寬23,高10) 的體積是多少？", options: ["A. 7130", "B. 6000", "C. 8000", "D. 5984"], ans: "A", hint: "31 × 23 × 10 = 7130。" },
+          { id: 8, type: "mc", q: "【宅配箱】方形箱(長22,寬17,高16) 的體積是多少？", options: ["A. 7130", "B. 5984", "C. 8928", "D. 6000"], ans: "B", hint: "22 × 17 × 16 = 5984。" },
+          { id: 9, type: "mc", q: "【宅配箱】長柱形箱(長62,寬12,高12) 的體積是多少？", options: ["A. 7130", "B. 5984", "C. 8928", "D. 9000"], ans: "C", hint: "62 × 12 × 12 = 8928。" },
+          { id: 10, type: "mc", q: "有一份禮物長 18cm、寬 14cm、高 9cm，最適合裝進哪種宅配箱？", options: ["A. 扁形箱 (31x23x10)", "B. 方形箱 (22x17x16)", "C. 長柱形 (62x12x12)", "D. 都裝不下"], ans: "B", hint: "禮物尺寸要小於箱子內部尺寸。18<22, 14<17, 9<16，方形箱最合適且空間浪費較少(雖然扁形也裝得下，但方形更接近)。修正：依附件，扁形也能裝，但通常選最小能裝的或題目指定比較。若比對長寬高：18,14,9 皆小於 22,17,16。" },
+          
+          // 生活量感 (學後檢測卷)
+          { id: 11, type: "tf", q: "一杯水的體積大約比 1 立方公尺大。", ans: false, hint: "1 立方公尺很大，可以裝得下好幾個小朋友，杯子很小。" },
+          { id: 12, type: "tf", q: "一輛貨車的載貨空間比 1 立方公尺大。", ans: true, hint: "貨車很大，通常好幾個立方公尺。" },
+          { id: 13, type: "tf", q: "一台烤麵包機的體積比 1 立方公尺大。", ans: false, hint: "烤麵包機放在桌上，比 1 立方公尺小很多。" },
+          { id: 14, type: "tf", q: "一輛校車的體積比 1 立方公尺大。", ans: true, hint: "校車非常大。" },
+          
+          // 複合形體與切割 (隨堂練習單/檢測卷)
+          { id: 15, type: "mc", q: "有兩個形體體積都是 180 cm³。形體 A 長 6cm、寬 3cm，高是多少？", options: ["A. 5", "B. 10", "C. 15", "D. 20"], ans: "B", hint: "180 ÷ 6 ÷ 3 = 10。" },
+          { id: 16, type: "mc", q: "形體 B 長 5cm、高 9cm，寬是多少？(體積也是 180)", options: ["A. 2", "B. 3", "C. 4", "D. 5"], ans: "C", hint: "180 ÷ 5 ÷ 9 = 4。" },
+          { id: 17, type: "mc", q: "計算凹字形體積時，通常用什麼方法？", options: ["A. 把它切成幾塊長方體再相加", "B. 把它補成大長方體再減空缺", "C. 以上皆可", "D. 只能用切的"], ans: "C", hint: "切割法和填補法都可以喔！" },
+          
+          // 換算應用 (綜合)
+          { id: 18, type: "mc", q: "3000000 立方公分 = ？立方公尺", options: ["A. 3", "B. 30", "C. 300", "D. 0.3"], ans: "A", hint: "劃掉 6 個 0。" },
+          { id: 19, type: "mc", q: "5 立方公尺 2000 立方公分 = ？立方公分", options: ["A. 52000", "B. 5002000", "C. 5020000", "D. 5200000"], ans: "B", hint: "5m³ = 5000000cm³，加上 2000 = 5002000。" },
+          { id: 20, type: "mc", q: "一個正方體邊長 200 公分，體積是多少立方公尺？", options: ["A. 8", "B. 8000000", "C. 800", "D. 6"], ans: "A", hint: "200公分 = 2公尺，2 × 2 × 2 = 8 立方公尺。" },
+          
+          // 進階應用
+          { id: 21, type: "mc", q: "甲正方體邊長 10cm，乙正方體邊長 20cm，乙的體積是甲的幾倍？", options: ["A. 2倍", "B. 4倍", "C. 8倍", "D. 16倍"], ans: "C", hint: "邊長變 2 倍，體積變 2×2×2=8 倍。" },
+          { id: 22, type: "mc", q: "用 1 立方公分的小積木堆成一個長 5cm、寬 4cm、高 3cm 的長方體，共需要幾個積木？", options: ["A. 12", "B. 60", "C. 23", "D. 120"], ans: "B", hint: "5 × 4 × 3 = 60 個。" },
+          { id: 23, type: "mc", q: "有一個水箱裡面長 50cm、寬 40cm、高 20cm，它的容積是多少立方公分？", options: ["A. 40000", "B. 2000", "C. 110", "D. 4000"], ans: "A", hint: "50 × 40 × 20 = 40000。" },
+          { id: 24, type: "mc", q: "一個長方體體積 480，已知底面積是 24，高是多少？", options: ["A. 20", "B. 12", "C. 24", "D. 48"], ans: "A", hint: "體積 ÷ 底面積 = 高，480 ÷ 24 = 20。" },
+          { id: 25, type: "tf", q: "把一塊長方體黏土切成兩半，兩塊黏土的體積總和會變少。", ans: false, hint: "切開後形狀變了，但總體積不變喔！" }
+        ];
+
+        // --- 互動組件 (保持不變) ---
         const InteractiveStack = () => {
           const [count, setCount] = useState(1);
           return (
@@ -358,13 +399,18 @@
           const [tempName, setTempName] = useState('');
           const [currentConcept, setCurrentConcept] = useState(0);
           
+          // 測驗相關狀態
+          const [activeQuizSet, setActiveQuizSet] = useState(null); // 'basic' or 'practice'
           const [currentQ, setCurrentQ] = useState(0);
           const [score, setScore] = useState(0);
           const [answers, setAnswers] = useState([]);
           const [showFeedback, setShowFeedback] = useState(false);
           const [currentAns, setCurrentAns] = useState(null);
 
-          // 直接設定您提供的 GAS 網址作為預設值
+          // 新增控制測驗選擇面板的顯示狀態
+          const [showQuizSelect, setShowQuizSelect] = useState(false);
+
+          // GAS 網址
           const [teacherUrl, setTeacherUrl] = useState("https://script.google.com/macros/s/AKfycbxr4w817Y7RjYRDFVKJtJiAdpLZTqWmSpJBHtP-GJqPaqnHj_PKczSkkYJZtM6JJ1E/exec"); 
           const [showSettings, setShowSettings] = useState(false);
           const [isSubmitting, setIsSubmitting] = useState(false);
@@ -397,13 +443,33 @@
             setScreen('menu');
           };
 
+          const startQuiz = (type) => {
+              setActiveQuizSet(type);
+              setCurrentQ(0);
+              setScore(0);
+              setAnswers([]);
+              setShowFeedback(false);
+              setScreen('quiz');
+              // 關閉選擇面板，不過因為畫面切換了，這行其實非必要，但保持狀態乾淨是好的
+              setShowQuizSelect(false);
+          };
+
+          // 取得目前作用中的題目集
+          const getActiveQuestions = () => {
+              return activeQuizSet === 'practice' ? QUESTIONS_PRACTICE : QUESTIONS_BASIC;
+          };
+
           const submitQuiz = () => {
-            const finalScore = Math.round((score / QUESTIONS.length) * 100);
+            const questions = getActiveQuestions();
+            const finalScore = Math.round((score / questions.length) * 100);
+            const quizTitle = activeQuizSet === 'practice' ? '課後練習卷' : '基礎觀念';
+            
             const record = {
+              title: quizTitle,
               date: new Date().toLocaleString(),
               score: finalScore,
               correctCount: score,
-              totalCount: QUESTIONS.length,
+              totalCount: questions.length,
               details: answers
             };
             
@@ -415,7 +481,8 @@
           const handleAnswer = (option) => {
             if (showFeedback) return;
             
-            const q = QUESTIONS[currentQ];
+            const questions = getActiveQuestions();
+            const q = questions[currentQ];
             let isCorrect = false;
             
             if (q.type === 'tf') isCorrect = (option === q.ans);
@@ -439,7 +506,8 @@
           const nextQuestion = () => {
             setShowFeedback(false);
             setCurrentAns(null);
-            if (currentQ < QUESTIONS.length - 1) {
+            const questions = getActiveQuestions();
+            if (currentQ < questions.length - 1) {
               setCurrentQ(prev => prev + 1);
             } else {
               submitQuiz();
@@ -452,7 +520,9 @@
             setIsSubmitting(true);
             
             const latest = user.history[0] || {};
-            const detailsStr = latest.details ? latest.details.map((a, i) => `${i+1}:${a.isCorrect ? 'O' : `X(${a.userAns})`}`).join(', ') : '無詳細資料';
+            // 格式化詳情，包含考卷名稱
+            const prefix = `[${latest.title || '測驗'}] `;
+            const detailsStr = prefix + (latest.details ? latest.details.map((a, i) => `${i+1}:${a.isCorrect ? 'O' : `X(${a.userAns})`}`).join(', ') : '無詳細資料');
             
             const payload = {
                 name: user.name,
@@ -463,16 +533,12 @@
             };
 
             try {
-                // 使用 no-cors 模式以避免跨域問題
                 await fetch(teacherUrl, {
                     method: 'POST',
                     mode: 'no-cors', 
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                
                 alert('✅ 成績已成功上傳給老師！');
             } catch (error) {
                 console.error('Upload Error:', error);
@@ -492,7 +558,6 @@
                     
                     <div className="space-y-4 text-gray-600">
                         <p>目前已設定預設的 Apps Script 網址，學生作答後成績會自動寫入您的 Google 試算表。</p>
-                        
                         <div>
                             <label className="block font-bold mb-1 text-gray-700">GAS 網頁應用程式網址：</label>
                             <input 
@@ -504,9 +569,44 @@
                             />
                         </div>
                     </div>
-
                     <div className="mt-8 flex justify-end">
                         <button onClick={() => setShowSettings(false)} className="px-6 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700">完成設定</button>
+                    </div>
+                </div>
+            </div>
+          );
+
+          // 測驗選擇畫面 (新增)
+          const QuizSelectionPanel = ({ onClose }) => (
+             <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+                <div className="bg-white rounded-3xl p-10 max-w-2xl w-full shadow-2xl transform transition-all scale-100 animate-fade-in">
+                    <div className="flex justify-between items-center mb-8">
+                        <h3 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
+                            <IconAward className="text-orange-500 w-10 h-10" /> 請選擇測驗範圍
+                        </h3>
+                        <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full"><IconX size={32} className="text-gray-500"/></button>
+                    </div>
+                    
+                    <div className="grid gap-6">
+                        <button onClick={() => startQuiz('basic')} className="flex items-center p-6 border-2 border-orange-200 rounded-2xl hover:bg-orange-50 hover:border-orange-400 transition group text-left">
+                            <div className="bg-orange-100 p-4 rounded-full mr-6 group-hover:bg-orange-200 transition">
+                                <span className="text-2xl font-bold text-orange-600">A</span>
+                            </div>
+                            <div>
+                                <h4 className="text-2xl font-bold text-gray-800 mb-1">基礎觀念挑戰</h4>
+                                <p className="text-gray-500 text-lg">共 30 題，包含觀念是非題與基礎計算。</p>
+                            </div>
+                        </button>
+
+                        <button onClick={() => startQuiz('practice')} className="flex items-center p-6 border-2 border-purple-200 rounded-2xl hover:bg-purple-50 hover:border-purple-400 transition group text-left">
+                            <div className="bg-purple-100 p-4 rounded-full mr-6 group-hover:bg-purple-200 transition">
+                                <span className="text-2xl font-bold text-purple-600">B</span>
+                            </div>
+                            <div>
+                                <h4 className="text-2xl font-bold text-gray-800 mb-1">課後練習卷 (進階)</h4>
+                                <p className="text-gray-500 text-lg">共 25 題，包含素養題與複合形體計算。</p>
+                            </div>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -565,14 +665,12 @@
                       <div className="mt-6 text-green-600 font-bold text-xl group-hover:translate-x-3 transition-transform">開始上課 &rarr;</div>
                     </div>
 
-                    <div onClick={() => {
-                      setScore(0); setCurrentQ(0); setAnswers([]); setScreen('quiz');
-                    }} className="bg-white p-10 rounded-3xl shadow-xl cursor-pointer hover:shadow-2xl transition transform hover:-translate-y-2 border-l-[12px] border-orange-400 group">
+                    <div onClick={() => setShowQuizSelect(true)} className="bg-white p-10 rounded-3xl shadow-xl cursor-pointer hover:shadow-2xl transition transform hover:-translate-y-2 border-l-[12px] border-orange-400 group">
                       <div className="flex items-center mb-6">
                         <IconAward className="w-12 h-12 text-orange-500 mr-4" />
                         <h2 className="text-3xl font-bold text-gray-800">挑戰測驗</h2>
                       </div>
-                      <p className="text-xl text-gray-600 leading-relaxed">30 題互動關卡，測試你是不是體積大師。</p>
+                      <p className="text-xl text-gray-600 leading-relaxed">包含基礎觀念與課後練習卷，測試你是不是體積大師。</p>
                       <div className="mt-6 text-orange-600 font-bold text-xl group-hover:translate-x-3 transition-transform">開始挑戰 &rarr;</div>
                     </div>
 
@@ -586,6 +684,7 @@
                     </div>
                   </div>
                   {showSettings && <TeacherSettingsPanel />}
+                  {showQuizSelect && <QuizSelectionPanel onClose={() => setShowQuizSelect(false)} />}
                 </div>
               </div>
             );
@@ -723,8 +822,9 @@
           }
 
           if (screen === 'quiz') {
-            const q = QUESTIONS[currentQ];
-            const progress = ((currentQ) / QUESTIONS.length) * 100;
+            const questions = getActiveQuestions();
+            const q = questions[currentQ];
+            const progress = ((currentQ) / questions.length) * 100;
 
             return (
               <div className="min-h-screen bg-indigo-50 flex flex-col">
@@ -735,10 +835,14 @@
                 <div className="flex-1 flex items-center justify-center p-8">
                   <div className="max-w-4xl w-full bg-white rounded-[2rem] shadow-2xl overflow-hidden p-12 relative">
                     <div className="absolute top-8 right-8 text-indigo-200 font-bold text-5xl">
-                      {currentQ + 1} <span className="text-2xl">/ {QUESTIONS.length}</span>
+                      {currentQ + 1} <span className="text-2xl">/ {questions.length}</span>
                     </div>
 
-                    <h2 className="text-4xl font-bold text-gray-800 mb-12 pr-20 leading-relaxed">
+                    <div className="absolute top-8 left-8 text-indigo-600 font-bold text-xl bg-indigo-100 px-4 py-2 rounded-full">
+                       {activeQuizSet === 'practice' ? '📝 課後練習卷' : '🏆 基礎觀念挑戰'}
+                    </div>
+
+                    <h2 className="text-4xl font-bold text-gray-800 mb-12 pr-20 leading-relaxed mt-10">
                       {q.q}
                     </h2>
 
@@ -775,7 +879,7 @@
                           💡 {currentAns.hint}
                         </div>
                         <button onClick={nextQuestion} className="px-12 py-4 bg-indigo-600 text-white rounded-full font-bold text-2xl hover:bg-indigo-700 shadow-xl hover:shadow-2xl transition-transform hover:-translate-y-1">
-                          {currentQ < QUESTIONS.length - 1 ? "下一題" : "看成績"}
+                          {currentQ < questions.length - 1 ? "下一題" : "看成績"}
                         </button>
                       </div>
                     )}
@@ -794,6 +898,9 @@
                   <div className="bg-purple-600 p-10 text-white text-center">
                     <h2 className="text-4xl font-bold mb-3">學習成績單</h2>
                     <p className="opacity-90 text-xl">姓名：{user.name}</p>
+                    <p className="mt-2 inline-block bg-purple-700 px-4 py-1 rounded-full text-sm">
+                        測驗項目：{latest.title || '一般測驗'}
+                    </p>
                   </div>
 
                   <div className="p-12">
@@ -842,7 +949,7 @@
                     <textarea 
                       readOnly 
                       className="w-full p-5 bg-gray-100 rounded-xl border-2 border-gray-200 text-lg font-mono h-40 mb-8 focus:outline-none"
-                      value={`【五下體積單元成績回報】\n姓名：${user.name}\n分數：${latest.score}\n時間：${latest.date}\n答對題數：${latest.correctCount}/${latest.totalCount}`}
+                      value={`【五下體積單元成績回報 - ${latest.title || '測驗'}】\n姓名：${user.name}\n分數：${latest.score}\n時間：${latest.date}\n答對題數：${latest.correctCount}/${latest.totalCount}`}
                     />
                     
                     <div className="grid grid-cols-2 gap-6">
@@ -850,7 +957,8 @@
                         回主選單
                       </button>
                       <button onClick={() => {
-                        setScore(0); setCurrentQ(0); setAnswers([]); setScreen('quiz');
+                        // 重新開始同一個測驗
+                        startQuiz(activeQuizSet || 'basic');
                       }} className="py-4 bg-purple-600 text-white rounded-xl font-bold text-xl hover:bg-purple-700 shadow-lg transition">
                         再挑戰一次
                       </button>
