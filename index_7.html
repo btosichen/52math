@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>表面積大冒險</title>
+  
+  <!-- 引入 Tailwind CSS (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- 引入 Lucide 圖示庫 (CDN) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- 自訂 CSS 動畫與樣式 -->
+  <style>
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes bounce-slow {
+      0%, 100% { transform: translateY(-5%); animation-timing-function: cubic-bezier(0.8,0,1,1); }
+      50% { transform: none; animation-timing-function: cubic-bezier(0,0,0.2,1); }
+    }
+    .animate-bounce-slow {
+      animation: bounce-slow 2s infinite;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.3s ease-in-out forwards;
+    }
+    .card-shadow {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+    .btn-press {
+      transition: transform 0.1s;
+    }
+    .btn-press:active {
+      transform: scale(0.95);
+    }
+    .btn-disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    /* 隱藏預設捲軸，讓畫面更像 App */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9; 
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1; 
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8; 
+    }
+    
+    /* 隱藏不想顯示的區塊 */
+    .view-section {
+      display: none;
+    }
+    .view-section.active {
+      display: block;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-sky-50 font-sans text-gray-800 pb-10" style="-webkit-tap-highlight-color: transparent;">
+
+  <!-- 共用導覽列 -->
+  <div id="navbar" class="bg-white p-4 shadow-sm flex justify-between items-center sticky top-0 z-10 hidden">
+    <button onclick="goHome()" class="flex items-center text-gray-600 hover:text-blue-600 font-bold btn-press">
+      <i data-lucide="home" class="w-6 h-6 mr-1"></i> 回首頁
+    </button>
+    <div id="nav-title" class="font-black text-xl text-blue-600 flex items-center">
+       <!-- 標題會由 JS 動態更新 -->
+    </div>
+    <div class="w-24"></div> <!-- 平衡用 -->
+  </div>
+
+  <!-- 首頁 (Home View) -->
+  <div id="view-home" class="view-section active">
+    <div class="max-w-2xl mx-auto pt-12 px-4 flex flex-col items-center">
+      <!-- Hero Section -->
+      <div class="relative mb-10 w-full text-center">
+        <div class="absolute top-0 left-4 animate-float opacity-80"><i data-lucide="box" class="w-12 h-12 text-blue-400"></i></div>
+        <div class="absolute top-10 right-4 animate-bounce-slow opacity-80"><i data-lucide="gift" class="w-16 h-16 text-pink-400"></i></div>
+        
+        <h1 class="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 mb-4 tracking-wide drop-shadow-sm" style="-webkit-text-fill-color: transparent;">
+          🎲 表面積大冒險
+        </h1>
+        <p class="text-xl md:text-2xl font-bold text-gray-600 bg-white inline-block px-6 py-2 rounded-full shadow-sm border-2 border-dashed border-gray-300">
+          一起破解正方體與長方體的秘密！
+        </p>
+      </div>
+
+      <!-- Buttons -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-lg mt-8">
+        <button onclick="startLearn()" class="btn-press group relative bg-yellow-400 hover:bg-yellow-300 text-yellow-900 rounded-3xl p-6 shadow-[0_8px_0_#b45309] hover:shadow-[0_4px_0_#b45309] hover:translate-y-1 transition-all flex flex-col items-center justify-center border-4 border-yellow-500">
+          <i data-lucide="book-open" class="w-16 h-16 mb-2 text-yellow-800 transition-transform transform group-hover:scale-110"></i>
+          <span class="text-3xl font-black tracking-wider">看重點</span>
+          <span class="text-yellow-800 font-bold mt-1 bg-yellow-200 px-3 py-1 rounded-full text-sm">6個魔法秘笈</span>
+        </button>
+
+        <button onclick="startQuiz()" class="btn-press group relative bg-green-400 hover:bg-green-300 text-green-900 rounded-3xl p-6 shadow-[0_8px_0_#166534] hover:shadow-[0_4px_0_#166534] hover:translate-y-1 transition-all flex flex-col items-center justify-center border-4 border-green-500">
+          <i data-lucide="play" class="w-16 h-16 mb-2 text-green-800 transition-transform transform group-hover:scale-110"></i>
+          <span class="text-3xl font-black tracking-wider">闖關去</span>
+          <span class="text-green-800 font-bold mt-1 bg-green-200 px-3 py-1 rounded-full text-sm">20題大挑戰</span>
+        </button>
+      </div>
+      
+      <div class="mt-16 text-gray-400 font-bold flex items-center justify-center">
+        適合國小五年級數學自學 <i data-lucide="star" class="w-4 h-4 ml-1 text-yellow-400 inline"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- 教學區 (Learn View) -->
+  <div id="view-learn" class="view-section">
+    <div class="max-w-2xl mx-auto pt-6 px-4">
+      <div class="mb-4 flex justify-between items-center bg-white p-3 rounded-full shadow-sm border border-gray-200">
+         <span id="learn-progress-text" class="font-bold text-gray-500 ml-4">進度：1 / 5</span>
+         <div id="learn-progress-dots" class="flex space-x-1 mr-4">
+           <!-- 動態產生點點 -->
+         </div>
+      </div>
+
+      <div id="lesson-card" class="card-shadow rounded-3xl p-6 md:p-8 border-4 mb-6 bg-white transition-all duration-300">
+        <div class="flex items-center space-x-4 mb-6 border-b-2 border-opacity-20 border-black pb-4">
+          <div id="lesson-icon-container" class="bg-white p-3 rounded-2xl shadow-sm">
+             <!-- Icon -->
+          </div>
+          <h2 id="lesson-title" class="text-3xl font-black text-gray-800"></h2>
+        </div>
+        
+        <div id="lesson-content" class="min-h-[300px]">
+          <!-- 內容 -->
+        </div>
+      </div>
+
+      <div class="flex justify-between mt-8">
+        <button id="btn-prev-lesson" onclick="prevLesson()" class="btn-press px-6 py-4 rounded-2xl font-bold text-lg flex items-center bg-white text-gray-700 shadow-md border-2 border-gray-200 hover:bg-gray-50">
+          <i data-lucide="arrow-left" class="mr-2"></i> 上一步
+        </button>
+        <button id="btn-next-lesson" onclick="nextLesson()" class="btn-press px-6 py-4 rounded-2xl font-bold text-lg flex items-center bg-blue-500 text-white shadow-[0_6px_0_#1e40af] hover:translate-y-1 hover:shadow-[0_2px_0_#1e40af] transition-all">
+          下一步 <i data-lucide="arrow-right" class="ml-2"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 測驗區 (Quiz View) -->
+  <div id="view-quiz" class="view-section">
+    <div class="max-w-2xl mx-auto pt-6 px-4">
+      <!-- 進度條 -->
+      <div class="mb-6">
+        <div class="flex justify-between text-sm font-bold text-gray-500 mb-2">
+          <span id="quiz-progress-text">第 1 題 / 共 20 題</span>
+          <span class="text-green-600 flex items-center"><i data-lucide="trophy" class="w-4 h-4 mr-1"></i> 分數: <span id="quiz-score">0</span></span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-4 shadow-inner">
+          <div id="quiz-progress-bar" class="bg-green-500 h-4 rounded-full transition-all duration-500 ease-out relative overflow-hidden" style="width: 0%;">
+            <div class="absolute top-0 left-0 bottom-0 right-0 bg-white opacity-20 w-full" style="background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent); background-size: 1rem 1rem;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 題目卡片 -->
+      <div class="card-shadow bg-white rounded-3xl p-6 md:p-8 border-4 border-blue-200 relative">
+         <!-- 題型標籤 -->
+         <div id="quiz-type-label" class="absolute -top-4 left-6 bg-blue-500 text-white px-4 py-1 rounded-full font-bold shadow-md text-sm border-2 border-white">
+           ⭕❌ 是非題
+         </div>
+
+        <h2 id="quiz-question-text" class="text-2xl md:text-3xl font-bold text-gray-800 mt-4 mb-8 leading-relaxed">
+          <!-- 題目 -->
+        </h2>
+
+        <!-- 選項區 -->
+        <div id="quiz-options-container" class="space-y-4">
+          <!-- 動態產生按鈕 -->
+        </div>
+
+        <!-- 回饋與解析區 -->
+        <div id="quiz-feedback-container" class="hidden mt-8 p-6 rounded-2xl border-2 animate-fadeIn relative overflow-hidden">
+          <!-- 背景裝飾 -->
+          <div class="absolute -right-4 -top-4 opacity-10" id="feedback-bg-icon">
+             <!-- Icon -->
+          </div>
+
+          <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between">
+            <div class="mb-4 md:mb-0 w-full md:w-3/4">
+              <p id="feedback-title" class="font-black text-2xl mb-2 flex items-center">
+                <!-- 標題 -->
+              </p>
+              <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 mt-2">
+                <p class="font-bold text-gray-500 text-sm mb-1">💡 觀念解析：</p>
+                <p id="feedback-explanation" class="text-gray-800 text-lg"></p>
+              </div>
+            </div>
+            
+            <button onclick="nextQuestion()" id="btn-next-question" class="btn-press bg-blue-500 hover:bg-blue-400 text-white font-black text-xl py-4 px-8 rounded-2xl shadow-[0_6px_0_#1e40af] hover:shadow-[0_2px_0_#1e40af] hover:translate-y-1 transition-all shrink-0 md:ml-4">
+              下一題
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 結果區 (Result View) -->
+  <div id="view-result" class="view-section">
+    <div class="max-w-md mx-auto pt-16 px-4 text-center">
+      <div class="bg-white rounded-3xl p-10 card-shadow border-4 border-yellow-300 relative overflow-hidden">
+        <!-- 彩帶裝飾 -->
+        <div class="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iMiIgZmlsbD0iI2Y1OTU5NSIvPjwvc3ZnPg==')]"></div>
+        
+        <i data-lucide="trophy" class="w-24 h-24 text-yellow-500 mx-auto mb-6 animate-bounce-slow"></i>
+        <h2 class="text-4xl font-black text-gray-800 mb-2">挑戰完成！</h2>
+        <p class="text-xl text-gray-500 font-bold mb-8">你完成了所有的表面積任務</p>
+        
+        <div class="bg-blue-50 rounded-2xl p-6 mb-8 border-2 border-blue-200">
+          <p class="text-gray-600 font-bold mb-2">你的總得分</p>
+          <div class="text-6xl font-black text-blue-600">
+            <span id="final-score">0</span> <span class="text-2xl text-blue-400">/ 20</span>
+          </div>
+          
+          <!-- 評語 -->
+          <p id="final-comment" class="mt-4 text-lg font-bold text-pink-600 bg-pink-100 py-2 rounded-xl">
+            <!-- 評語 -->
+          </p>
+        </div>
+
+        <button onclick="goHome()" class="btn-press w-full bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black text-2xl py-5 rounded-2xl shadow-[0_6px_0_#b45309] hover:shadow-[0_2px_0_#b45309] hover:translate-y-1 transition-all border-4 border-yellow-500">
+          🏠 回到主畫面
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript 邏輯 -->
+  <script>
+    // --- 教材資料 ---
+    const lessons = [
+      {
+        title: "1. 什麼是「表面積」？",
+        iconHtml: '<i data-lucide="gift" class="w-12 h-12 text-pink-500"></i>',
+        color: "bg-pink-100 border-pink-300",
+        content: `
+          <div class="space-y-4 text-lg">
+            <p class="font-bold text-2xl text-pink-600">表面積 ＝「物體外面所有面的面積加起來」</p>
+            
+            <div class="flex justify-center my-6">
+              <svg viewBox="0 0 200 200" class="w-48 h-48 animate-float drop-shadow-md">
+                <polygon points="100,40 160,75 100,110 40,75" fill="#fbcfe8" stroke="#db2777" strokeWidth="2" />
+                <polygon points="40,75 100,110 100,180 40,145" fill="#f9a8d4" stroke="#db2777" strokeWidth="2" />
+                <polygon points="100,110 160,75 160,145 100,180" fill="#f472b6" stroke="#db2777" strokeWidth="2" />
+                <path d="M 100,110 L 100,130" stroke="#9d174d" strokeWidth="2" strokeDasharray="4,4" />
+                <text x="100" y="30" textAnchor="middle" fill="#9d174d" fontWeight="bold">上面</text>
+                <text x="30" y="120" textAnchor="middle" fill="#9d174d" fontWeight="bold">左面</text>
+                <text x="170" y="120" textAnchor="middle" fill="#9d174d" fontWeight="bold">右面</text>
+                <text x="100" y="195" textAnchor="middle" fill="#db2777" fontWeight="bold" fontSize="12">（還有看不到的底、後，共6個面！）</text>
+              </svg>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow-sm border-2 border-pink-200">
+              <p class="mb-2 font-bold text-gray-700">💡 生活中的例子：</p>
+              <ul class="list-disc pl-6 space-y-2 text-gray-600">
+                <li>幫禮物盒包裝的「包裝紙」面積 🎁</li>
+                <li>冰箱外殼的面積</li>
+                <li>牛奶盒外面的面積 🥛</li>
+                <li>魔術方塊外面的總面積 🎲</li>
+              </ul>
+            </div>
+            <p class="bg-yellow-100 p-3 rounded-lg text-yellow-800 font-bold animate-pulse text-center">
+              👉 如果要幫禮盒「包包裝紙」，需要算的其實就是「表面積」！
+            </p>
+          </div>
+        `
+      },
+      {
+        title: "2. 正方體的表面積",
+        iconHtml: '<i data-lucide="box" class="w-12 h-12 text-blue-500"></i>',
+        color: "bg-blue-100 border-blue-300",
+        content: `
+          <div class="space-y-4 text-lg">
+            <div class="flex items-center space-x-4 bg-white p-4 rounded-xl border-2 border-blue-200">
+              <div class="flex-1">
+                <h3 class="font-bold text-blue-600 mb-2">🔷 正方體特色</h3>
+                <ul class="list-disc pl-6 text-gray-600">
+                  <li>有 <span class="font-bold text-red-500 text-xl">6</span> 個面</li>
+                  <li>每個面都是一樣大的正方形！</li>
+                </ul>
+              </div>
+              <div class="w-20 h-20 bg-blue-400 rounded-lg shadow-inner flex items-center justify-center text-white font-bold text-2xl animate-float">
+                正方體
+              </div>
+            </div>
+            
+            <div class="flex justify-center my-4">
+              <svg viewBox="0 0 200 200" class="w-48 h-48 drop-shadow-md">
+                <polygon points="100,40 150,70 100,100 50,70" fill="#bfdbfe" stroke="#2563eb" strokeWidth="2" />
+                <polygon points="50,70 100,100 100,160 50,130" fill="#93c5fd" stroke="#2563eb" strokeWidth="2" />
+                <polygon points="100,100 150,70 150,130 100,160" fill="#3b82f6" stroke="#1e40af" strokeWidth="2" />
+                <text x="125" y="125" textAnchor="middle" fill="white" fontWeight="bold" fontSize="18">5 × 5</text>
+                <text x="70" y="125" textAnchor="middle" fill="#1e3a8a" fontWeight="bold">邊長 5</text>
+                <text x="130" y="60" textAnchor="middle" fill="#1e3a8a" fontWeight="bold">邊長 5</text>
+              </svg>
+            </div>
+
+            <div class="bg-yellow-200 p-4 rounded-xl text-center border-4 border-yellow-400 transform rotate-1">
+              <p class="font-bold text-yellow-900 mb-1">🟧 重點公式</p>
+              <p class="text-2xl font-black text-red-600">邊長 × 邊長 × 6</p>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border-2 border-green-200">
+              <p class="font-bold text-green-600 mb-2">🌟 範例：邊長 5 公分的骰子</p>
+              <p>Step 1. 先算 1 個面： <span class="font-bold">5 × 5 = 25</span></p>
+              <p>Step 2. 因為有 6 個面： <span class="font-bold text-blue-600">25 × 6 = 150</span></p>
+              <p class="mt-2 text-center font-bold text-xl bg-green-100 p-2 rounded">✅ 表面積 = 150 平方公分</p>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "3. 長方體的表面積",
+        iconHtml: '<i data-lucide="package" class="w-12 h-12 text-green-500"></i>',
+        color: "bg-green-100 border-green-300",
+        content: `
+          <div class="space-y-4 text-lg">
+            <div class="bg-white p-4 rounded-xl border-2 border-green-200">
+              <h3 class="font-bold text-green-600 mb-2">🔷 長方體特色</h3>
+              <ul class="list-disc pl-6 text-gray-600">
+                <li>有 <span class="font-bold text-red-500">6</span> 個面</li>
+                <li><span class="font-bold text-blue-500">相對的面</span>一樣大</li>
+                <li>有 <span class="font-bold text-purple-500 text-xl">3組</span> 不同的長方形</li>
+              </ul>
+            </div>
+            
+            <div class="flex justify-center my-4">
+              <svg viewBox="0 0 240 200" class="w-56 h-48 drop-shadow-md">
+                <polygon points="100,40 200,80 140,110 40,70" fill="#bfdbfe" stroke="#2563eb" strokeWidth="2" />
+                <polygon points="40,70 140,110 140,170 40,130" fill="#bbf7d0" stroke="#16a34a" strokeWidth="2" />
+                <polygon points="140,110 200,80 200,140 140,170" fill="#fbcfe8" stroke="#db2777" strokeWidth="2" />
+                
+                <text x="120" y="80" textAnchor="middle" fill="#1d4ed8" fontWeight="bold">上/下面</text>
+                <text x="90" y="130" textAnchor="middle" fill="#166534" fontWeight="bold">前/後面</text>
+                <text x="175" y="135" textAnchor="middle" fill="#9d174d" fontWeight="bold">左/右面</text>
+              </svg>
+            </div>
+
+            <div class="bg-orange-200 p-4 rounded-xl text-center border-4 border-orange-400">
+              <p class="font-bold text-orange-900 mb-1">🟧 重點公式</p>
+              <p class="text-xl font-black text-red-600">（長×寬 ＋ 寬×高 ＋ 長×高）× 2</p>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border-2 border-blue-200 text-sm md:text-base">
+              <p class="font-bold text-blue-600 mb-2">🌟 範例：牛奶盒 (長6、寬4、高3)</p>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="bg-gray-50 p-2 rounded">上面/下面：6×4 = 24</div>
+                <div class="bg-gray-50 p-2 rounded">左面/右面：4×3 = 12</div>
+                <div class="bg-gray-50 p-2 rounded">前面/後面：6×3 = 18</div>
+              </div>
+              <p class="mt-2">全部加起來： (24 + 12 + 18) × 2 = <span class="font-bold text-red-500 text-xl">108</span></p>
+              <p class="mt-1 text-center font-bold text-lg bg-blue-100 p-1 rounded">✅ 表面積 = 108 平方公分</p>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "4. 展開圖與常犯錯誤",
+        iconHtml: '<i data-lucide="book-open" class="w-12 h-12 text-purple-500"></i>',
+        color: "bg-purple-100 border-purple-300",
+        content: `
+          <div class="space-y-4 text-lg">
+            <div class="bg-red-50 p-4 rounded-xl border-2 border-red-200">
+              <h3 class="font-bold text-red-600 mb-2">🧠 學生容易錯的地方 (注意囉！)</h3>
+              <ul class="space-y-2 text-gray-700">
+                <li>❌ 看不出哪些面是一樣大的</li>
+                <li>❌ 忘記有 6 個面 (只算了一半)</li>
+                <li>❌ 忘記單位要寫「<span class="font-bold text-red-500">平方公分</span>」</li>
+              </ul>
+            </div>
+            
+            <div class="bg-yellow-300 p-6 rounded-xl border-4 border-yellow-500 text-center card-shadow transform -rotate-1">
+              <h3 class="font-black text-2xl text-yellow-900 mb-4">🌟 超強記憶法</h3>
+              <div class="flex flex-col space-y-4">
+                <div class="bg-white p-3 rounded-lg">
+                  <span class="text-3xl">🎲</span>
+                  <p class="font-bold text-xl mt-1">正方體：<span class="text-blue-600">「6個一模一樣！」</span></p>
+                </div>
+                <div class="bg-white p-3 rounded-lg">
+                  <span class="text-3xl">📦</span>
+                  <p class="font-bold text-xl mt-1">長方體：<span class="text-green-600">「3組雙胞胎！」</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "5. 切割與堆疊的魔法",
+        iconHtml: '<i data-lucide="scissors" class="w-12 h-12 text-orange-500"></i>',
+        color: "bg-orange-100 border-orange-300",
+        content: `
+          <div class="space-y-6 text-lg">
+            <!-- 切割 -->
+            <div class="bg-white p-4 rounded-xl border-l-8 border-l-red-400 shadow-sm">
+              <div class="flex items-center space-x-2 mb-2">
+                <i data-lucide="scissors" class="text-red-500"></i>
+                <h3 class="font-bold text-red-600 text-xl">✂️ 切開後...</h3>
+              </div>
+
+              <div class="flex justify-center my-4">
+                <svg viewBox="0 0 300 200" class="w-full max-w-xs h-40 drop-shadow-md">
+                  <defs>
+                    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
+                    </marker>
+                  </defs>
+                  
+                  <polygon points="80,50 110,65 80,80 50,65" fill="#fca5a5" stroke="#ef4444" strokeWidth="1" />
+                  <polygon points="50,65 80,80 80,130 50,115" fill="#f87171" stroke="#ef4444" strokeWidth="1" />
+                  <polygon points="80,80 110,65 110,115 80,130" fill="#fef08a" stroke="#ca8a04" strokeWidth="3" strokeDasharray="4,2" />
+                  <text x="95" y="105" textAnchor="middle" fill="#b45309" fontWeight="bold" fontSize="14">新面!</text>
+                  
+                  <polygon points="160,90 190,105 160,120 130,105" fill="#fca5a5" stroke="#ef4444" strokeWidth="1" />
+                  <polygon points="130,105 160,120 160,170 130,155" fill="#fef08a" stroke="#ca8a04" strokeWidth="3" strokeDasharray="4,2" />
+                  <polygon points="160,120 190,105 190,155 160,170" fill="#f87171" stroke="#ef4444" strokeWidth="1" />
+                  <text x="145" y="145" textAnchor="middle" fill="#b45309" fontWeight="bold" fontSize="14">新面!</text>
+
+                  <path d="M 115,80 L 140,95" stroke="#ef4444" strokeWidth="3" markerEnd="url(#arrow)" />
+                </svg>
+              </div>
+
+              <p class="bg-red-100 text-red-800 font-bold p-2 rounded text-center text-xl mb-2">
+                通常表面積會 <span class="text-red-600 text-2xl">增加！</span>
+              </p>
+              <p class="text-gray-600">為什麼？因為原本藏在<span class="font-bold">裡面</span>的面跑出來啦！</p>
+              <p class="text-sm text-gray-500 mt-1">🍞 例如：吐司切半、積木分開</p>
+            </div>
+
+            <!-- 堆疊 -->
+            <div class="bg-white p-4 rounded-xl border-l-8 border-l-blue-400 shadow-sm">
+              <div class="flex items-center space-x-2 mb-2">
+                <i data-lucide="layers" class="text-blue-500"></i>
+                <h3 class="font-bold text-blue-600 text-xl">📦📦 堆疊後...</h3>
+              </div>
+
+              <div class="flex justify-center my-4">
+                <svg viewBox="0 0 200 200" class="w-48 h-48 drop-shadow-md">
+                  <defs>
+                    <marker id="arrow-down" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
+                    </marker>
+                  </defs>
+                  
+                  <polygon points="100,100 140,120 100,140 60,120" fill="#e5e7eb" stroke="#9ca3af" strokeWidth="2" strokeDasharray="4,2"/>
+                  <polygon points="60,120 100,140 100,180 60,160" fill="#93c5fd" stroke="#3b82f6" strokeWidth="2"/>
+                  <polygon points="100,140 140,120 140,160 100,180" fill="#60a5fa" stroke="#3b82f6" strokeWidth="2"/>
+                  
+                  <polygon points="100,30 140,50 100,70 60,50" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2"/>
+                  <polygon points="60,50 100,70 100,110 60,90" fill="#93c5fd" stroke="#3b82f6" strokeWidth="2"/>
+                  <polygon points="100,70 140,50 140,90 100,110" fill="#60a5fa" stroke="#3b82f6" strokeWidth="2"/>
+                  
+                  <path d="M 100,75 L 100,95" stroke="#ef4444" strokeWidth="3" markerEnd="url(#arrow-down)" />
+                  <text x="150" y="105" textAnchor="middle" fill="#ef4444" fontWeight="bold" fontSize="14">貼合消失的面</text>
+                  <path d="M 140,100 L 110,110" stroke="#ef4444" strokeWidth="2" strokeDasharray="2,2"/>
+                </svg>
+              </div>
+
+              <p class="bg-blue-100 text-blue-800 font-bold p-2 rounded text-center text-xl mb-2">
+                接觸到的面會消失！
+              </p>
+              <p class="text-gray-600">所以：表面積通常會 <span class="font-bold text-blue-600 text-xl">減少</span></p>
+              <p class="text-sm text-gray-500 mt-1">🧱 例如：積木疊起來、紙箱堆疊</p>
+            </div>
+          </div>
+        `
+      }
+    ];
+
+    // --- 測驗資料 ---
+    const quizQuestions = [
+      { id: 1, type: 'tf', q: "正方體有6個面。", a: true, exp: "正方體就像骰子，上下、左右、前後總共6個面。" },
+      { id: 2, type: 'tf', q: "正方體每個面的大小都不同。", a: false, exp: "正方體的特色就是6個面都是「一模一樣」的正方形喔！" },
+      { id: 3, type: 'tf', q: "長方體的相對面一樣大。", a: true, exp: "沒錯！長方體有3組雙胞胎(上面和下面、左面和右面、前面和後面)。" },
+      { id: 4, type: 'tf', q: "表面積只要算前面就好。", a: false, exp: "表面積是「外面所有面」的面積加起來，不能只算一面喔。" },
+      { id: 5, type: 'tf', q: "正方體表面積公式，算出一個面後要乘6。", a: true, exp: "因為正方體有6個一樣大的面，所以算完一個面乘以6最快！" },
+      { id: 6, type: 'tf', q: "切開物體後，表面積通常會增加。", a: true, exp: "切開後，原本藏在裡面的面露出來了，所以表面積會變大！" },
+      { id: 7, type: 'tf', q: "堆疊積木後，表面積一定增加。", a: false, exp: "錯囉！兩個積木貼在一起時，接觸的面會藏起來消失，表面積通常會減少。" },
+      { id: 8, type: 'tf', q: "「平方公分」是面積的單位。", a: true, exp: "公分是長度，平方公分是面積。算表面積記得用平方公分！" },
+      { id: 9, type: 'tf', q: "長方體一定有3組相同的面。", a: true, exp: "是的，長方體由3組相對且相同的長方形組成。" },
+      { id: 10, type: 'tf', q: "表面積和周長是一樣的。", a: false, exp: "周長是外圍一圈的長度(一條線)，表面積是包裝外表的面積(一片面)，不一樣喔！" },
+      { id: 11, type: 'mc', q: "邊長4公分的正方體表面積是多少？", options: ["16", "64", "96", "24"], a: 2, exp: "一個面是 4×4=16。有6個面：16×6 = 96。" },
+      { id: 12, type: 'mc', q: "長方體有幾個面？", options: ["4", "5", "6", "8"], a: 2, exp: "不管是正方體還是長方體，都有6個面。" },
+      { id: 13, type: 'mc', q: "下面哪個最像長方體？", options: ["足球", "牛奶盒", "飛盤", "圓球"], a: 1, exp: "牛奶盒有長、寬、高，是標準的長方體。" },
+      { id: 14, type: 'mc', q: "正方體每個面是什麼形狀？", options: ["圓形", "三角形", "長方形", "正方形"], a: 3, exp: "正方體的特色就是每個面都是一樣大的正方形。" },
+      { id: 15, type: 'mc', q: "長6、寬2、高3的長方體，哪一組是相同的面？", options: ["6×2", "2×3", "6×3", "以上皆是"], a: 3, exp: "長方體有三組相同的面：上下(6×2)、左右(2×3)、前後(6×3)，所以以上皆是。" },
+      { id: 16, type: 'mc', q: "切開積木後，最可能發生什麼事？", options: ["表面積減少", "表面積增加", "完全不變", "消失"], a: 1, exp: "切開會露出新的切面，所以總表面積會增加！" },
+      { id: 17, type: 'mc', q: "兩個積木貼在一起後，表面積通常？", options: ["增加", "減少", "不變", "爆炸"], a: 1, exp: "貼在一起的面會被遮住，不用算面積，所以總表面積會減少。" },
+      { id: 18, type: 'mc', q: "哪個單位最適合表示表面積？", options: ["公尺", "平方公分", "公斤", "公升"], a: 1, exp: "面積的單位要用「平方」，像是平方公分或平方公尺。" },
+      { id: 19, type: 'mc', q: "邊長5公分正方體，一個面的面積是多少？", options: ["10", "20", "25", "30"], a: 2, exp: "一個面是正方形，面積 = 邊長×邊長 = 5×5 = 25。" },
+      { id: 20, type: 'mc', q: "表面積主要是在算：", options: ["裡面的空間", "外面的總面積", "周圍長度", "重量"], a: 1, exp: "表面積就是物體「外面」所有面的面積總和。" }
+    ];
+
+    // --- 狀態變數 ---
+    let currentView = 'home';
+    let lessonIndex = 0;
+    let quizIndex = 0;
+    let score = 0;
+    let selectedAnswer = null;
+    let showFeedback = false;
+    let isCorrect = false;
+
+    // --- 初始化 Lucide Icons ---
+    function renderIcons() {
+      lucide.createIcons();
+    }
+
+    // --- 畫面切換控制 ---
+    function switchView(viewId) {
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+      document.getElementById('view-' + viewId).classList.add('active');
+      currentView = viewId;
+      
+      const navbar = document.getElementById('navbar');
+      if (viewId === 'home') {
+        navbar.classList.add('hidden');
+      } else {
+        navbar.classList.remove('hidden');
+        document.getElementById('nav-title').innerHTML = viewId === 'learn' ? '📖 學習時間' : '🎮 挑戰時間';
+      }
+      renderIcons();
+    }
+
+    function goHome() { switchView('home'); }
+
+    // --- 教學區邏輯 ---
+    function startLearn() {
+      lessonIndex = 0;
+      renderLesson();
+      switchView('learn');
+    }
+
+    function renderLesson() {
+      const lesson = lessons[lessonIndex];
+      
+      // 更新進度與點點
+      document.getElementById('learn-progress-text').innerText = `進度：${lessonIndex + 1} / ${lessons.length}`;
+      let dotsHtml = '';
+      for(let i=0; i<lessons.length; i++) {
+        const bgClass = i <= lessonIndex ? 'bg-blue-500' : 'bg-gray-200';
+        dotsHtml += `<div class="h-3 w-3 rounded-full ${bgClass}"></div>`;
+      }
+      document.getElementById('learn-progress-dots').innerHTML = dotsHtml;
+
+      // 更新卡片外觀
+      const card = document.getElementById('lesson-card');
+      card.className = `card-shadow rounded-3xl p-6 md:p-8 border-4 mb-6 bg-white transition-all duration-300 ${lesson.color}`;
+      
+      document.getElementById('lesson-icon-container').innerHTML = lesson.iconHtml;
+      document.getElementById('lesson-title').innerText = lesson.title;
+      document.getElementById('lesson-content').innerHTML = lesson.content;
+
+      // 按鈕狀態
+      const btnPrev = document.getElementById('btn-prev-lesson');
+      const btnNext = document.getElementById('btn-next-lesson');
+      
+      if(lessonIndex === 0) {
+        btnPrev.className = "btn-press px-6 py-4 rounded-2xl font-bold text-lg flex items-center bg-gray-200 text-gray-400 cursor-not-allowed";
+        btnPrev.disabled = true;
+      } else {
+        btnPrev.className = "btn-press px-6 py-4 rounded-2xl font-bold text-lg flex items-center bg-white text-gray-700 shadow-md border-2 border-gray-200 hover:bg-gray-50";
+        btnPrev.disabled = false;
+      }
+
+      if(lessonIndex === lessons.length - 1) {
+        btnNext.innerHTML = `回首頁 <i data-lucide="arrow-right" class="ml-2"></i>`;
+      } else {
+        btnNext.innerHTML = `下一步 <i data-lucide="arrow-right" class="ml-2"></i>`;
+      }
+
+      window.scrollTo(0, 0);
+      renderIcons();
+    }
+
+    function nextLesson() {
+      if (lessonIndex < lessons.length - 1) {
+        lessonIndex++;
+        renderLesson();
+      } else {
+        goHome();
+      }
+    }
+
+    function prevLesson() {
+      if (lessonIndex > 0) {
+        lessonIndex--;
+        renderLesson();
+      }
+    }
+
+    // --- 測驗區邏輯 ---
+    function startQuiz() {
+      quizIndex = 0;
+      score = 0;
+      resetQuizState();
+      renderQuestion();
+      switchView('quiz');
+    }
+
+    function resetQuizState() {
+      selectedAnswer = null;
+      showFeedback = false;
+      isCorrect = false;
+      document.getElementById('quiz-feedback-container').classList.add('hidden');
+    }
+
+    function renderQuestion() {
+      const q = quizQuestions[quizIndex];
+      
+      // 更新進度
+      document.getElementById('quiz-progress-text').innerText = `第 ${quizIndex + 1} 題 / 共 20 題`;
+      document.getElementById('quiz-score').innerText = score;
+      document.getElementById('quiz-progress-bar').style.width = `${((quizIndex) / quizQuestions.length) * 100}%`;
+      
+      // 更新題型與題目
+      document.getElementById('quiz-type-label').innerText = q.type === 'tf' ? '⭕❌ 是非題' : '🅰️🅱️ 選擇題';
+      document.getElementById('quiz-question-text').innerText = q.q;
+
+      // 產生選項
+      const optionsContainer = document.getElementById('quiz-options-container');
+      optionsContainer.innerHTML = ''; // 清空
+
+      if (q.type === 'tf') {
+        optionsContainer.className = 'grid grid-cols-2 gap-4';
+        optionsContainer.innerHTML = `
+          <button onclick="handleAnswer(true)" id="opt-true" class="btn-press flex flex-col items-center justify-center p-6 rounded-2xl border-4 transition-all bg-gray-50 border-gray-200 hover:border-blue-400 hover:bg-blue-50">
+            <span class="text-5xl mb-2 text-green-500">⭕</span>
+            <span class="font-bold text-2xl text-gray-700">是</span>
+          </button>
+          <button onclick="handleAnswer(false)" id="opt-false" class="btn-press flex flex-col items-center justify-center p-6 rounded-2xl border-4 transition-all bg-gray-50 border-gray-200 hover:border-blue-400 hover:bg-blue-50">
+            <span class="text-5xl mb-2 text-red-500">❌</span>
+            <span class="font-bold text-2xl text-gray-700">否</span>
+          </button>
+        `;
+      } else {
+        optionsContainer.className = 'grid grid-cols-1 gap-3';
+        q.options.forEach((optText, idx) => {
+          const letter = String.fromCharCode(65 + idx);
+          optionsContainer.innerHTML += `
+            <button onclick="handleAnswer(${idx})" id="opt-${idx}" class="btn-press text-left p-5 rounded-2xl border-4 font-bold text-xl transition-all flex items-center bg-gray-50 border-gray-200 text-gray-700 hover:border-blue-400 hover:bg-blue-50 hover:pl-6">
+              <span class="w-10 h-10 rounded-full bg-white flex items-center justify-center mr-4 shadow-sm border-2 border-gray-200 shrink-0">${letter}</span>
+              ${optText}
+            </button>
+          `;
+        });
+      }
+      
+      renderIcons();
+    }
+
+    function getPraise() {
+      const praises = ["太棒了！🎉", "答對啦！高手😎", "非常聰明！🌟", "完全正確！💪"];
+      return praises[Math.floor(Math.random() * praises.length)];
+    }
+
+    function getEncourage() {
+      const encourages = ["再想一下，你一定可以！💪", "差一點點喔！加油！", "沒關係，看解析學起來！"];
+      return encourages[Math.floor(Math.random() * encourages.length)];
+    }
+
+    function handleAnswer(answerValue) {
+      if (showFeedback) return;
+      
+      const q = quizQuestions[quizIndex];
+      selectedAnswer = answerValue;
+      isCorrect = (q.a === answerValue);
+      showFeedback = true;
+      
+      if (isCorrect) {
+        score++;
+        document.getElementById('quiz-score').innerText = score;
+      }
+
+      // 更新按鈕外觀
+      if (q.type === 'tf') {
+        updateBtnClass('opt-true', true === q.a, selectedAnswer === true);
+        updateBtnClass('opt-false', false === q.a, selectedAnswer === false);
+      } else {
+        q.options.forEach((_, idx) => {
+          updateBtnClass(`opt-${idx}`, idx === q.a, selectedAnswer === idx);
+        });
+      }
+
+      // 顯示回饋區塊
+      const feedbackContainer = document.getElementById('quiz-feedback-container');
+      feedbackContainer.classList.remove('hidden');
+      
+      if (isCorrect) {
+        feedbackContainer.className = "mt-8 p-6 rounded-2xl border-2 animate-fadeIn relative overflow-hidden bg-green-50 border-green-200";
+        document.getElementById('feedback-bg-icon').innerHTML = '<i data-lucide="check-circle-2" class="w-32 h-32 text-green-500"></i>';
+        document.getElementById('feedback-title').className = "font-black text-2xl mb-2 flex items-center text-green-600";
+        document.getElementById('feedback-title').innerHTML = `<i data-lucide="check-circle-2" class="mr-2"></i> ${getPraise()}`;
+      } else {
+        feedbackContainer.className = "mt-8 p-6 rounded-2xl border-2 animate-fadeIn relative overflow-hidden bg-red-50 border-red-200";
+        document.getElementById('feedback-bg-icon').innerHTML = '<i data-lucide="x-circle" class="w-32 h-32 text-red-500"></i>';
+        document.getElementById('feedback-title').className = "font-black text-2xl mb-2 flex items-center text-red-600";
+        document.getElementById('feedback-title').innerHTML = `<i data-lucide="x-circle" class="mr-2"></i> ${getEncourage()}`;
+      }
+
+      document.getElementById('feedback-explanation').innerText = q.exp;
+      document.getElementById('btn-next-question').innerText = quizIndex === quizQuestions.length - 1 ? '看成績' : '下一題';
+      
+      renderIcons();
+    }
+
+    function updateBtnClass(id, isCorrectAnswer, isSelected) {
+      const btn = document.getElementById(id);
+      btn.disabled = true; // 鎖定
+      btn.classList.add('btn-disabled'); // 停用點擊動畫
+
+      // 清除預設 hover 樣式
+      btn.className = btn.className.replace(/hover:[^\s]+/g, '');
+
+      if (isCorrectAnswer) {
+        btn.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+        btn.classList.remove('bg-gray-50', 'border-gray-200', 'text-gray-700');
+      } else if (isSelected && !isCorrect) {
+        btn.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
+        btn.classList.remove('bg-gray-50', 'border-gray-200', 'text-gray-700');
+      } else {
+        btn.classList.add('opacity-50');
+      }
+    }
+
+    function nextQuestion() {
+      if (quizIndex < quizQuestions.length - 1) {
+        quizIndex++;
+        resetQuizState();
+        renderQuestion();
+        window.scrollTo(0, 0);
+      } else {
+        showResult();
+      }
+    }
+
+    // --- 結果區邏輯 ---
+    function showResult() {
+      document.getElementById('final-score').innerText = score;
+      
+      let comment = '';
+      if (score === 20) comment = '👑 完美！你是表面積大師！';
+      else if (score >= 15) comment = '🌟 非常厲害！觀念很清楚喔！';
+      else if (score >= 10) comment = '👍 不錯喔！再複習一下會更棒！';
+      else comment = '💪 沒關係！點擊學習區多看幾次秘笈吧！';
+      
+      document.getElementById('final-comment').innerText = comment;
+      switchView('result');
+    }
+
+    // 啟動初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      renderIcons();
+    });
+
+  </script>
+</body>
+</html>
